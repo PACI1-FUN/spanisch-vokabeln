@@ -1,0 +1,1175 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vokabeln</title>
+<meta name="theme-color" content="#5f6368">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Vokabeln">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  :root { --bg:#faf6ef; --card:#fff; --ink:#2b2b2b; --accent:#c8442b; --accent2:#e9a23b; --blue:#4169E1; --bar:#5f6368; --ok:#2e8b57; --bad:#c0392b; --muted:#7a7468; }
+  * { box-sizing:border-box; }
+  button, select, .flash, .bx { touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+  main { padding-bottom:env(safe-area-inset-bottom); }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; }
+  header { background:var(--bar); color:#fff; padding:calc(14px + env(safe-area-inset-top)) calc(24px + env(safe-area-inset-right)) 14px calc(24px + env(safe-area-inset-left)); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+  header h1 { margin:0; font-size:1.3rem; }
+  .langsel { -webkit-appearance:none; appearance:none; background-color:transparent; color:#fff; border:none; font:inherit; font-weight:700;
+    padding:2px 26px 2px 2px; margin:0; cursor:pointer; border-radius:6px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' fill='none' stroke='white' stroke-width='2'/></svg>");
+    background-repeat:no-repeat; background-position:right 4px center; background-size:13px 9px; }
+  .langsel:hover, .langsel:focus { background-color:rgba(255,255,255,.15); outline:none; }
+  .langsel option { color:#222; background:#fff; }
+  nav button { background:transparent; color:#fff; border:2px solid rgba(255,255,255,.6); border-radius:8px; padding:6px 14px; margin-left:6px; cursor:pointer; font-size:.95rem; }
+  nav button.active { background:#fff; color:var(--bar); }
+  main { max-width:760px; margin:24px auto; padding:0 16px; }
+  .topic { color:var(--muted); margin-bottom:12px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .topic select { font-size:1rem; padding:7px 12px; border:2px solid var(--blue); border-radius:8px; background:#fff; color:var(--ink); cursor:pointer; }
+
+  .boxes { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:10px; }
+  .bx { background:var(--card); border-radius:10px; padding:10px 6px; text-align:center; box-shadow:0 1px 3px rgba(0,0,0,.08); border-top:5px solid var(--blue); cursor:pointer; user-select:none; border-left:3px solid transparent; border-right:3px solid transparent; border-bottom:3px solid transparent; }
+  .bx.active { border-color:var(--blue); background:#eef2ff; }
+  .bx.b1.active { border-color:#c0392b; background:#fbeceb; } .bx.b5.active { border-color:#2e8b57; background:#e8f5ed; }
+  .bx.b1 { border-top-color:#c0392b; } .bx.b5 { border-top-color:#2e8b57; }
+  .bx .n { display:block; font-size:1.5rem; font-weight:700; }
+  .bx .t { display:block; font-size:.9rem; font-weight:600; }
+  .bx .s { display:block; font-size:.7rem; color:var(--muted); }
+  .stats { display:flex; gap:12px; margin-bottom:18px; flex-wrap:wrap; }
+  .stat { background:var(--card); border-radius:10px; padding:8px 16px; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  .stat b { margin-right:6px; font-size:1.2rem; color:var(--blue); }
+
+  .flash { background:var(--card); border-radius:18px; box-shadow:0 4px 14px rgba(0,0,0,.1); min-height:280px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; cursor:pointer; padding:24px; user-select:none; }
+  .flash.back { background:#eef2ff; }
+  .emoji { font-size:5rem; line-height:1; }
+  .emoji.pair { font-size:3.6rem; }
+  .emoji svg { height:180px; width:auto; max-width:100%; display:block; margin:0 auto; }
+  .word { font-size:2.2rem; font-weight:700; margin-top:10px; }
+  .lang { font-size:.8rem; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-bottom:6px; }
+  .hint { color:var(--muted); margin-top:8px; font-size:.9rem; }
+  .row { display:flex; gap:10px; justify-content:center; margin-top:16px; flex-wrap:wrap; align-items:center; }
+  button.btn { border:none; border-radius:10px; padding:10px 18px; font-size:1rem; cursor:pointer; background:var(--accent2); color:#222; }
+  button.btn:disabled { opacity:.45; cursor:default; }
+  button.btn.ok { background:var(--ok); color:#fff; }
+  button.btn.bad { background:var(--bad); color:#fff; }
+  button.btn.ghost { background:#e8e2d6; }
+  .options { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px; }
+  .options button { background:var(--card); border:2px solid #e3dccd; border-radius:12px; padding:14px; font-size:1.1rem; cursor:pointer; }
+  .options button:hover:not(:disabled) { border-color:var(--accent2); }
+  .options button.right { background:#d8f0e0; border-color:var(--ok); }
+  .options button.wrong { background:#f6d9d5; border-color:var(--bad); }
+  .list { width:100%; border-collapse:collapse; background:var(--card); border-radius:12px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  .list td { padding:9px 14px; border-bottom:1px solid #eee; }
+  .list td:first-child { font-size:1.6rem; width:96px; }
+  .list td:first-child svg { height:48px; width:auto; max-width:96px; display:block; }
+  .list td.fach { color:var(--muted); font-size:.9rem; white-space:nowrap; }
+  .hidden { display:none !important; }
+  @media (max-width:520px){ .options{grid-template-columns:1fr;} .bx .s{display:none;} }
+  @media (max-width:520px){
+    header { padding-left:calc(14px + env(safe-area-inset-left)); padding-right:calc(14px + env(safe-area-inset-right)); padding-bottom:10px; }
+    header h1 { font-size:1.1rem; }
+    nav button { padding:5px 10px; margin-left:4px; }
+    main { margin-top:14px; }
+    .topic { margin-bottom:8px; }
+    .bx { padding:6px 4px; } .bx .n { font-size:1.25rem; } .bx .t { font-size:.8rem; }
+    .flash { min-height:220px; padding:16px; }
+    .emoji { font-size:4rem; } .emoji svg { height:130px; }
+    .word { font-size:1.8rem; }
+    .row { margin-top:10px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1><select id="langSel" class="langsel" aria-label="Sprache wählen"></select></h1>
+  <nav>
+    <button data-tab="cards" class="active">Karteikasten</button>
+    <button data-tab="quiz">Quiz</button>
+    <button data-tab="list">Liste</button>
+  </nav>
+</header>
+<main>
+  <div class="topic">
+    <label for="topicSel"><b>Thema:</b></label>
+    <select id="topicSel"></select>
+    <span id="count"></span>
+    <button class="btn ghost" id="resetBtn" style="margin-left:auto; padding:6px 12px; font-size:.85rem">Zähler auf 0 setzen</button>
+  </div>
+
+  <div id="cardTiles"><div class="boxes" id="boxes"></div></div>
+
+  <section id="cards">
+    <div id="study">
+      <div class="flash" id="flash">
+        <div class="lang" id="fLang"></div>
+        <div class="emoji" id="fEmoji"></div>
+        <div class="word" id="fWord"></div>
+        <div class="hint" id="fHint">Tippen zum Umdrehen</div>
+      </div>
+      <div class="row">
+        <button class="btn ghost" id="speak">🔊 Aussprache</button>
+        <button class="btn ghost" id="dirBtn"></button>
+      </div>
+      <div class="row">
+        <button class="btn bad" id="again" disabled>✗ Nicht gewusst</button>
+        <button class="btn ok" id="known" disabled>✓ Gewusst</button>
+      </div>
+    </div>
+
+    <div class="flash hidden" id="done" style="cursor:default">
+      <div class="emoji">🎉</div>
+      <div class="word" style="font-size:1.5rem" id="doneTitle"></div>
+      <div class="hint" id="doneInfo"></div>
+      <div class="row"><button class="btn" id="againBtn">Neue Runde</button><button class="btn" id="allBtn">Alle Wörter üben</button></div>
+    </div>
+  </section>
+
+  <section id="quiz" class="hidden">
+    <div class="boxes" id="qTiles"></div>
+    <div class="row" style="margin:0 0 12px; justify-content:space-between">
+      <span class="hint" id="qProgress" style="margin:0"></span>
+      <button class="btn ghost" id="qNew">↻ Neues Quiz</button>
+    </div>
+    <div id="qReview" class="hidden" style="margin-bottom:16px"></div>
+    <div id="qPlay">
+      <div class="flash" style="cursor:default">
+        <div class="emoji" id="qEmoji"></div>
+        <div class="word" id="qWord"></div>
+        <div class="hint" id="qHint"></div>
+      </div>
+      <div class="options" id="opts"></div>
+      <div class="row">
+        <button class="btn ghost" id="qSpeak">🔊 Aussprache</button>
+        <button class="btn" id="next" disabled>Weiter</button>
+      </div>
+    </div>
+    <div class="flash hidden" id="qDone" style="cursor:default">
+      <div class="emoji">🏁</div>
+      <div class="word" style="font-size:1.5rem">Quiz beendet</div>
+      <div class="hint" id="qDoneInfo"></div>
+      <div class="row"><button class="btn" id="qAgain">Neues Quiz</button></div>
+    </div>
+  </section>
+
+  <section id="list" class="hidden">
+    <table class="list" id="table"></table>
+  </section>
+</main>
+
+<script>
+const TOPICS = {
+  tiere: { name: "🐾 Tiere", words: [
+    ["el perro","Hund","🐕"],["el gato","Katze","🐈"],["el caballo","Pferd","🐴"],
+    ["la vaca","Kuh","🐄"],["el cerdo","Schwein","🐖"],["la oveja","Schaf","🐑"],
+    ["la cabra","Ziege","🐐"],["el pollo","Huhn","🐔"],["el pato","Ente","🦆"],
+    ["el conejo","Kaninchen","🐇"],["el ratón","Maus","🐁"],["el pájaro","Vogel","🐦"],
+    ["el pez","Fisch","🐟"],["la tortuga","Schildkröte","🐢"],["la serpiente","Schlange","🐍"],
+    ["la rana","Frosch","🐸"],["el elefante","Elefant","🐘"],["el león","Löwe","🦁"],
+    ["el tigre","Tiger","🐅"],["el oso","Bär","🐻"],["el mono","Affe","🐒"],
+    ["la jirafa","Giraffe","🦒"],["el lobo","Wolf","🐺"],["el zorro","Fuchs","🦊"],
+    ["el delfín","Delfin","🐬"],["la ballena","Wal","🐋"],["el tiburón","Hai","🦈"],
+    ["la mariposa","Schmetterling","🦋"],["la abeja","Biene","🐝"],["la araña","Spinne","🕷️"]
+  ]},
+  koerper: { name: "🧍 Menschlicher Körper", words: [
+    ["la cabeza","Kopf","🧑"],["el pelo","Haar","💇"],["la cara","Gesicht","🙂"],
+    ["la frente","Stirn","🤦"],["el ojo","Auge","👁️"],["la oreja","Ohr","👂"],
+    ["la nariz","Nase","👃"],["la boca","Mund","👄"],["el diente","Zahn","🦷"],
+    ["la lengua","Zunge","👅"],["la barba","Bart","🧔"],["el cuello","Hals","🧣","hals"],
+    ["el hombro","Schulter","🤷","schulter"],["el brazo","Arm","🙋"],["el codo","Ellbogen","💪"],
+    ["la mano","Hand","✋"],["el dedo","Finger","👆"],["la uña","Nagel","💅"],
+    ["la espalda","Rücken","🔙","ruecken"],["la barriga","Bauch","🤰"],["la pierna","Bein","🦵"],
+    ["la rodilla","Knie","🧎"],["el pie","Fuss","🦶"],["el dedo del pie","Zeh","🦶","zeh"],
+    ["el corazón","Herz","🫀"],["el pulmón","Lunge","🫁"],["el cerebro","Gehirn","🧠"],
+    ["el hueso","Knochen","🦴"],["la piel","Haut","🧴","haut"],["la sangre","Blut","🩸"]
+  ]},
+  badezimmer: { name: "🛁 Badezimmer", words: [
+    ["la bañera", "Badewanne", "🛁"],["la ducha", "Dusche", "🚿"],["el lavabo", "Waschbecken", "🚰"],
+    ["el grifo", "Wasserhahn", "💧"],["el inodoro", "Toilette", "🚽"],["el espejo", "Spiegel", "🪞"],
+    ["el jabón", "Seife", "🧼"],["el champú", "Shampoo", "🧴"],["el cepillo de dientes", "Zahnbürste", "🪥"],
+    ["la pasta de dientes", "Zahnpasta", "🦷"],["el papel higiénico", "Toilettenpapier", "🧻"],["la toalla", "Handtuch", "🧖"],
+    ["la esponja", "Schwamm", "🧽"],["el peine", "Kamm", "💇"],["el secador de pelo", "Föhn", "💨"],
+    ["la maquinilla de afeitar", "Rasierer", "🪒"],["la báscula", "Badezimmerwaage", "⚖️"],["la cortina de ducha", "Duschvorhang", "🪟"],
+    ["el cubo de basura", "Abfalleimer", "🗑️"],["la lavadora", "Waschmaschine", "🧺"],["las tijeras", "Schere", "✂️"],
+    ["el algodón", "Watte", "☁️"],["la alfombrilla de baño", "Badematte", "🟫"],["el vapor", "Dampf", "♨️"],
+    ["el agua caliente", "Warmwasser", "🔥"],["el agua fría", "Kaltwasser", "🧊"]
+  ]},
+  wohnzimmer: { name: "🛋️ Wohnzimmer", words: [
+    ["el sofá", "Sofa", "🛋️"],["el sillón", "Sessel", "💺"],["la silla", "Stuhl", "🪑"],
+    ["la mesa", "Tisch", "🍽️"],["la televisión", "Fernseher", "📺"],["el mando a distancia", "Fernbedienung", "📺🎛️"],
+    ["la lámpara", "Lampe", "💡"],["la ventana", "Fenster", "🪟"],["la cortina", "Vorhang", "🎭"],
+    ["la alfombra", "Teppich", "🟥"],["la estantería", "Bücherregal", "📚"],["el libro", "Buch", "📖"],
+    ["el cuadro", "Bild", "🖼️"],["el reloj de pared", "Wanduhr", "🕰️"],["la planta", "Pflanze", "🪴"],
+    ["el jarrón", "Vase", "🏺"],["la chimenea", "Cheminée", "🔥"],["el cojín", "Kissen", "💤"],
+    ["la radio", "Radio", "📻"],["el teléfono", "Telefon", "☎️"],["el ordenador", "Computer", "💻"],
+    ["la puerta", "Tür", "🚪"],["el suelo", "Boden", "🟫"],["la pared", "Wand", "🧱"],
+    ["la vela", "Kerze", "🕯️"],["el ventilador", "Ventilator", "🌀"],["el altavoz", "Lautsprecher", "🔊"],
+    ["el piano", "Klavier", "🎹"],["el juego de mesa", "Gesellschaftsspiel", "🎲"],["la manta", "Wolldecke", "🧣"]
+  ]},
+  schlafzimmer: { name: "🛏️ Schlafzimmer", words: [
+    ["la cama", "Bett", "🛏️"],["la almohada", "Kopfkissen", "🛌"],["el edredón", "Duvet", "☁️"],
+    ["la sábana", "Leintuch", "⬜"],["el colchón", "Matratze", "🟦"],["el armario", "Kleiderschrank", "👚🚪"],
+    ["la cómoda", "Kommode", "🗄️"],["el cajón", "Schublade", "🗃️"],["la mesita de noche", "Nachttisch", "🛏️🗄️"],
+    ["el despertador", "Wecker", "⏰"],["la lámpara de noche", "Nachttischlampe", "🛏️💡"],["el pijama", "Pyjama", "👕"],
+    ["las zapatillas de casa", "Finken", "🥿"],["el espejo", "Spiegel", "🪞"],["la percha", "Kleiderbügel", "🧥"],
+    ["la persiana", "Rollladen", "🪟"],["la cortina", "Vorhang", "🎭"],["dormir", "schlafen", "😴"],
+    ["el sueño", "Traum", "💭"],["la luna", "Mond", "🌙"],["la estrella", "Stern", "⭐"],
+    ["la noche", "Nacht", "🌃"],["el peluche", "Kuscheltier", "🧸"],["la cuna", "Kinderbett", "👶"],
+    ["bostezar", "gähnen", "🥱"],["roncar", "schnarchen", "😪"],["despertarse", "aufwachen", "🌅"],
+    ["la ropa", "Kleider", "👚"]
+  ]},
+  eingang: { name: "🚪 Eingangsbereich", words: [
+    ["la puerta de entrada", "Haustür", "🚪"],["el timbre", "Klingel", "🔔"],["la llave", "Schlüssel", "🔑"],
+    ["la cerradura", "Schloss", "🔒"],["el felpudo", "Fussmatte", "🟫"],["el buzón", "Briefkasten", "📬"],
+    ["la carta", "Brief", "✉️"],["el paquete", "Paket", "📦"],["el paraguas", "Regenschirm", "☂️"],
+    ["el perchero", "Garderobe", "🪝"],["el abrigo", "Mantel", "🧥"],["el sombrero", "Hut", "🎩"],
+    ["los zapatos", "Schuhe", "👟"],["el zapatero", "Schuhschrank", "👞"],["la bufanda", "Schal", "🧣"],
+    ["los guantes", "Handschuhe", "🧤"],["la gorra", "Mütze", "🧢"],["el espejo", "Spiegel", "🪞"],
+    ["la escalera", "Treppe", "⬆️"],["el pasillo", "Flur", "🚶"],["la mirilla", "Türspion", "👁️"],
+    ["el número de la casa", "Hausnummer", "🔢"],["el porche", "Vorplatz", "🏡"],["el escalón", "Stufe", "🪜"],
+    ["la mochila", "Rucksack", "🎒"],["la bicicleta", "Velo", "🚲"],["el casco", "Helm", "⛑️"],
+    ["el garaje", "Garage", "🚗"],["el interruptor de la luz", "Lichtschalter", "💡🔘"],["entrar", "eintreten", "➡️🚪"],
+    ["salir", "hinausgehen", "🚪➡️"]
+  ]},
+  kueche: { name: "🍳 Küche", words: [
+    ["la cocina", "Küche", "👩‍🍳"],["la nevera", "Kühlschrank", "🧊"],["el congelador", "Tiefkühler", "❄️"],
+    ["el horno", "Backofen", "🔥"],["la placa de cocción", "Herdplatte", "♨️"],["el fregadero", "Spüle", "🚰"],
+    ["la sartén", "Bratpfanne", "🍳"],["la olla", "Kochtopf", "🍲"],["el cuchillo", "Messer", "🔪"],
+    ["el tenedor", "Gabel", "🍴"],["la cuchara", "Löffel", "🥄"],["el plato", "Teller", "🍽️"],
+    ["el vaso", "Glas", "🥛"],["la taza", "Tasse", "☕"],["la copa", "Weinglas", "🍷"],
+    ["la botella", "Flasche", "🍾"],["el cuenco", "Schüssel", "🥣"],["la tabla de cortar", "Schneidebrett", "🪵"],
+    ["la cafetera", "Kaffeemaschine", "☕🔌"],["el microondas", "Mikrowelle", "🍿"],["el lavavajillas", "Geschirrspüler", "🍽️💦"],
+    ["la tetera", "Teekanne", "🫖"],["el delantal", "Schürze", "🧑‍🍳"],["la batidora", "Mixer", "🌀"],
+    ["el rallador", "Reibe", "🧀"],["el colador", "Sieb", "🕸️"],["el tostador", "Toaster", "🍞"],
+    ["el mantel", "Tischtuch", "🟥"],["la servilleta", "Serviette", "🧻"],["la lata", "Konservendose", "🥫"],
+    ["la bandeja", "Tablett", "🥡"],["cocinar", "kochen", "🥘"],["hornear", "backen", "🥧"],
+    ["cortar", "schneiden", "✂️"]
+  ]},
+  garten: { name: "🌳 Garten", words: [
+    ["el jardín", "Garten", "🏡"],["el césped", "Rasen", "🌱"],["la flor", "Blume", "🌸"],
+    ["la rosa", "Rose", "🌹"],["el tulipán", "Tulpe", "🌷"],["el girasol", "Sonnenblume", "🌻"],
+    ["el árbol", "Baum", "🌳"],["la hoja", "Blatt", "🍃"],["la rama", "Ast", "🌿"],
+    ["la maceta", "Blumentopf", "🪴"],["la regadera", "Giesskanne", "🪴💦"],["la manguera", "Gartenschlauch", "🧵"],
+    ["la pala", "Schaufel", "⛏️"],["el rastrillo", "Rechen", "🧹"],["la carretilla", "Schubkarre", "🛒"],
+    ["el cortacésped", "Rasenmäher", "🌿✂️"],["la semilla", "Samen", "🌰"],["la tierra", "Erde", "🟤"],
+    ["el huerto", "Gemüsegarten", "🥕"],["el banco", "Gartenbank", "🪑"],["la valla", "Zaun", "🚧"],
+    ["el caracol", "Schnecke", "🐌"],["la lombriz", "Regenwurm", "🪱"],["la hormiga", "Ameise", "🐜"],
+    ["la mosca", "Fliege", "🪰"],["la piscina", "Schwimmbad", "🏊"],["la barbacoa", "Grill", "🔥🍖"],
+    ["la sombrilla", "Sonnenschirm", "⛱️"],["el columpio", "Schaukel", "🎠"],["el nido", "Nest", "🥚"],
+    ["el cactus", "Kaktus", "🌵"],["la seta", "Pilz", "🍄"],["las tijeras de podar", "Gartenschere", "✂️"]
+  ]},
+  werkstatt: { name: "🔧 Werkstatt", words: [
+    ["el martillo", "Hammer", "🔨"],["el clavo", "Nagel", "📌"],["el tornillo", "Schraube", "🔩"],
+    ["el destornillador", "Schraubenzieher", "🪛"],["la llave inglesa", "Schraubenschlüssel", "🔧"],["los alicates", "Zange", "🗜️"],
+    ["la sierra", "Säge", "🪚"],["el taladro", "Bohrmaschine", "🔌"],["el engranaje", "Zahnrad", "⚙️"],
+    ["la cinta métrica", "Massband", "📏"],["la escuadra", "Winkel", "📐"],["el nivel", "Wasserwaage", "⚖️"],
+    ["el cepillo de carpintero", "Hobel", "🪵"],["la lima", "Feile", "📎"],["el papel de lija", "Schleifpapier", "🟫"],
+    ["la madera", "Holz", "🌲"],["el metal", "Metall", "🔗"],["el pegamento", "Leim", "🧴"],
+    ["la pintura", "Farbe", "🎨"],["el pincel", "Pinsel", "🖌️"],["la escalera", "Leiter", "🪜"],
+    ["la caja de herramientas", "Werkzeugkasten", "🧰"],["el banco de trabajo", "Werkbank", "🛠️"],["el casco", "Schutzhelm", "⛑️"],
+    ["las gafas de protección", "Schutzbrille", "🥽"],["los guantes de trabajo", "Arbeitshandschuhe", "🧤"],["la cuerda", "Seil", "🪢"],
+    ["el cable", "Kabel", "🔌"],["la bombilla", "Glühbirne", "💡"],["la pila", "Batterie", "🔋"],
+    ["el imán", "Magnet", "🧲"],["la linterna", "Taschenlampe", "🔦"],["el serrín", "Sägemehl", "🟨"],
+    ["el soldador", "Lötkolben", "🔌🔥"]
+  ]},
+  strasse: { name: "🚦 Strasse", words: [
+    ["la calle", "Strasse", "🏘️🚗"],["la acera", "Gehweg", "👣"],["el semáforo", "Ampel", "🚦"],
+    ["el paso de peatones", "Fussgängerstreifen", "🚸"],["el coche", "Auto", "🚗"],["el autobús", "Bus", "🚌"],
+    ["el camión", "Lastwagen", "🚛"],["la moto", "Motorrad", "🏍️"],["la bicicleta", "Velo", "🚲"],
+    ["el taxi", "Taxi", "🚕"],["la ambulancia", "Ambulanz", "🚑"],["el coche de bomberos", "Feuerwehrauto", "🚒"],
+    ["el coche de policía", "Polizeiauto", "🚓"],["la señal de tráfico", "Verkehrsschild", "⚠️"],["el stop", "Stoppschild", "🛑"],
+    ["el cruce", "Kreuzung", "🔀"],["la rotonda", "Kreisel", "🔄"],["el puente", "Brücke", "🌉"],
+    ["el túnel", "Tunnel", "🚇"],["la parada de autobús", "Bushaltestelle", "🚏"],["el edificio", "Gebäude", "🏢"],
+    ["la tienda", "Laden", "🏪"],["la farola", "Strassenlaterne", "💡"],["el atasco", "Stau", "🚗🚙🚕"],
+    ["la autopista", "Autobahn", "🛣️"],["el peatón", "Fussgänger", "🚶"],["el tranvía", "Tram", "🚋"],
+    ["el aparcamiento", "Parkplatz", "🅿️"],["la esquina", "Ecke", "📐"]
+  ]},
+  park: { name: "🏞️ Park", words: [
+    ["el parque", "Park", "🏞️"],["el banco", "Parkbank", "🪑"],["la fuente", "Brunnen", "⛲"],
+    ["el estanque", "Teich", "🦆💧"],["el tobogán", "Rutschbahn", "🎢"],["el balancín", "Wippe", "⚖️"],
+    ["el columpio", "Schaukel", "🎠"],["el cajón de arena", "Sandkasten", "🏖️"],["el camino", "Weg", "👣"],
+    ["la hierba", "Gras", "🌿"],["el árbol", "Baum", "🌳"],["la ardilla", "Eichhörnchen", "🐿️"],
+    ["la paloma", "Taube", "🕊️"],["el cisne", "Schwan", "🦢"],["el patinete", "Trottinett", "🛴"],
+    ["los patines", "Rollschuhe", "🛼"],["el balón", "Ball", "⚽"],["la cometa", "Drachen", "🪁"],
+    ["el picnic", "Picknick", "🧺"],["el helado", "Glace", "🍦"],["el corredor", "Jogger", "🏃"],
+    ["el ciclista", "Velofahrer", "🚴"],["el paseo", "Spaziergang", "🚶"],["el cochecito", "Kinderwagen", "👶"],
+    ["la papelera", "Abfalleimer", "🗑️"],["el mapa", "Plan", "🗺️"],["el sol", "Sonne", "☀️"],
+    ["la sombra", "Schatten", "⛱️"],["el perro", "Hund", "🐕"]
+  ]},
+  zoo: { name: "🦓 Zoo", words: [
+    ["la cebra", "Zebra", "🦓"],["el rinoceronte", "Nashorn", "🦏"],["el hipopótamo", "Nilpferd", "🦛"],
+    ["el camello", "Kamel", "🐪"],["el canguro", "Känguru", "🦘"],["el koala", "Koala", "🐨"],
+    ["el panda", "Panda", "🐼"],["el pingüino", "Pinguin", "🐧"],["el flamenco", "Flamingo", "🦩"],
+    ["el pavo real", "Pfau", "🦚"],["el loro", "Papagei", "🦜"],["el búho", "Eule", "🦉"],
+    ["el águila", "Adler", "🦅"],["el cocodrilo", "Krokodil", "🐊"],["el camaleón", "Chamäleon", "🦎"],
+    ["la foca", "Robbe", "🦭"],["la nutria", "Otter", "🦦"],["el gorila", "Gorilla", "🦍"],
+    ["el leopardo", "Leopard", "🐆"],["el avestruz", "Strauss", "🐦"],["el murciélago", "Fledermaus", "🦇"],
+    ["el perezoso", "Faultier", "🦥"],["el suricata", "Erdmännchen", "🐿️"],["el bisonte", "Bison", "🦬"],
+    ["el ciervo", "Hirsch", "🦌"],["el pulpo", "Krake", "🐙"],["la jaula", "Käfig", "⛓️"],
+    ["el cuidador", "Tierpfleger", "🧑‍🌾🦓"]
+  ]},
+  bahnhof: { name: "🚉 Bahnhof", words: [
+    ["la estación", "Bahnhof", "🚉"],["el tren", "Zug", "🚆"],["la vía", "Gleis", "🛤️"],
+    ["el andén", "Perron", "🧍🚆"],["el billete", "Billett", "🎫"],["la taquilla", "Billettschalter", "🎫🧑‍💼"],
+    ["el horario", "Fahrplan", "🕒"],["el retraso", "Verspätung", "⏰"],["la maleta", "Koffer", "🧳"],
+    ["la mochila", "Rucksack", "🎒"],["el vagón", "Wagen", "🚃"],["la locomotora", "Lokomotive", "🚂"],
+    ["el revisor", "Kondukteur", "🧑‍✈️"],["el pasajero", "Passagier", "🧍"],["la salida", "Ausgang", "🚪"],
+    ["la escalera mecánica", "Rolltreppe", "↗️"],["el ascensor", "Lift", "🛗"],["el reloj de la estación", "Bahnhofsuhr", "🕰️"],
+    ["el panel de salidas", "Anzeigetafel", "📋"],["el transbordo", "Umsteigen", "🔄"],["el tren rápido", "Schnellzug", "🚄"],
+    ["el metro", "U-Bahn", "🚇"],["el tranvía", "Tram", "🚋"],["la consigna", "Gepäckaufbewahrung", "🛅"],
+    ["el quiosco", "Kiosk", "📰"],["la cafetería", "Bahnhofbuffet", "☕"],["los aseos", "Toiletten", "🚻"],
+    ["el aviso", "Durchsage", "📢"],["el plano de la red", "Netzplan", "🗺️"],["el abono", "Abonnement", "🎟️"]
+  ]},
+  tankstelle: { name: "⛽ Tankstelle", words: [
+    ["la gasolinera", "Tankstelle", "⛽🚗"],["el surtidor", "Zapfsäule", "⛽"],["la gasolina", "Benzin", "⛽💧"],
+    ["el diésel", "Diesel", "🚛"],["la manguera", "Schlauch", "🧵"],["el depósito", "Tank", "🪣"],
+    ["el coche", "Auto", "🚗"],["el conductor", "Fahrer", "🧑"],["la tienda", "Shop", "🏪"],
+    ["el aceite", "Öl", "🛢️"],["el neumático", "Reifen", "⭕"],["el aire", "Luft", "💨"],
+    ["la presión", "Reifendruck", "🌡️"],["el lavado de coches", "Autowaschanlage", "🚗💦"],["la aspiradora", "Staubsauger", "🧹"],
+    ["el limpiaparabrisas", "Scheibenwischer", "🌧️"],["el parabrisas", "Windschutzscheibe", "🪟"],["el espejo retrovisor", "Rückspiegel", "🪞"],
+    ["el motor", "Motor", "⚙️"],["el capó", "Motorhaube", "🚗🔧"],["el maletero", "Kofferraum", "🧳"],
+    ["la batería", "Autobatterie", "🔋"],["los faros", "Scheinwerfer", "🔦"],["el cinturón de seguridad", "Sicherheitsgurt", "💺🔗"],
+    ["la matrícula", "Nummernschild", "🔢"],["la tarjeta", "Karte", "💳"],["el recibo", "Quittung", "🧾"],
+    ["el café", "Kaffee", "☕"],["el precio", "Preis", "🏷️"],["el mecánico", "Mechaniker", "🧑‍🔧"],
+    ["la avería", "Panne", "⚠️"]
+  ]},
+  flughafen: { name: "✈️ Flughafen", words: [
+    ["el aeropuerto", "Flughafen", "✈️🏢"],["el avión", "Flugzeug", "✈️"],["el vuelo", "Flug", "✈️☁️"],
+    ["la pista", "Piste", "🛬🛣️"],["el despegue", "Start", "🛫"],["el aterrizaje", "Landung", "🛬"],
+    ["la terminal", "Terminal", "🏢"],["la puerta de embarque", "Flugsteig", "🚪"],["la tarjeta de embarque", "Bordkarte", "🎫"],
+    ["el pasaporte", "Reisepass", "🛂"],["la aduana", "Zoll", "🛃"],["la maleta", "Koffer", "🧳"],
+    ["el equipaje de mano", "Handgepäck", "🎒"],["la cinta de equipaje", "Gepäckband", "🛄"],["el piloto", "Pilot", "🧑‍✈️"],
+    ["la azafata", "Flugbegleiterin", "👩‍✈️"],["el pasajero", "Passagier", "🧍"],["el asiento", "Sitzplatz", "💺"],
+    ["la ventanilla", "Fensterplatz", "💺🪟"],["el pasillo", "Gang", "↔️"],["las alas", "Flügel", "🕊️"],
+    ["el retraso", "Verspätung", "⏰"],["el helicóptero", "Helikopter", "🚁"],["la torre de control", "Kontrollturm", "🗼"],
+    ["el control de seguridad", "Sicherheitskontrolle", "🛡️"],["la sala de espera", "Wartehalle", "🪑"],["la tienda libre de impuestos", "Duty-free-Shop", "🛍️"],
+    ["el destino", "Reiseziel", "📍"],["las nubes", "Wolken", "☁️"],["el viaje", "Reise", "🌍"]
+  ]},
+  landschaft: { name: "⛰️ Landschaft", words: [
+    ["la montaña", "Berg", "🏔️"],["la colina", "Hügel", "⛰️"],["el valle", "Tal", "🌄"],
+    ["el río", "Fluss", "🏞️"],["el lago", "See", "🛶"],["el mar", "Meer", "🌊"],
+    ["la isla", "Insel", "🏝️"],["el bosque", "Wald", "🌲"],["el desierto", "Wüste", "🏜️"],
+    ["la cascada", "Wasserfall", "💦"],["el volcán", "Vulkan", "🌋"],["la cueva", "Höhle", "🕳️"],
+    ["el glaciar", "Gletscher", "🧊"],["la nieve", "Schnee", "❄️"],["el prado", "Wiese", "🌾"],
+    ["el campo", "Feld", "🌻"],["la roca", "Fels", "🪨"],["la piedra", "Stein", "⚪"],
+    ["la arena", "Sand", "🟨"],["el cielo", "Himmel", "🌌"],["el arco iris", "Regenbogen", "🌈"],
+    ["la niebla", "Nebel", "🌫️"],["la tormenta", "Gewitter", "⛈️"],["el camino", "Weg", "👣"],
+    ["el pueblo", "Dorf", "🏘️"],["la ciudad", "Stadt", "🏙️"],["la selva", "Dschungel", "🌴"],
+    ["el pantano", "Sumpf", "🐸"],["la costa", "Küste", "🏖️"],["el acantilado", "Klippe", "🧗"],
+    ["el horizonte", "Horizont", "🌅"],["la cima", "Gipfel", "🚩"],["el arroyo", "Bach", "💧"]
+  ]},
+  bauernhof: { name: "🚜 Bauernhof", words: [
+    ["la granja", "Bauernhof", "🐄🏡"],["el granjero", "Bauer", "🧑‍🌾"],["el tractor", "Traktor", "🚜"],
+    ["el establo", "Stall", "🐄🏠"],["el granero", "Scheune", "🛖"],["la paja", "Stroh", "🟨"],
+    ["el heno", "Heu", "🐄🌾"],["el campo", "Acker", "🟫"],["el trigo", "Weizen", "🌾"],
+    ["el maíz", "Mais", "🌽"],["la cosecha", "Ernte", "🧺"],["el huevo", "Ei", "🥚"],
+    ["la leche", "Milch", "🥛"],["el queso", "Käse", "🧀"],["la mantequilla", "Butter", "🧈"],
+    ["la gallina", "Henne", "🐔"],["el gallo", "Hahn", "🐓"],["el pollito", "Küken", "🐥"],
+    ["el toro", "Stier", "🐂"],["el ternero", "Kalb", "🐮"],["el cordero", "Lamm", "🐑"],
+    ["el burro", "Esel", "🐴"],["el pavo", "Truthahn", "🦃"],["el corral", "Hühnerhof", "🐔🐔"],
+    ["la valla", "Zaun", "🚧"],["el pozo", "Ziehbrunnen", "⛲"],["el espantapájaros", "Vogelscheuche", "🎃"],
+    ["la horca", "Heugabel", "🔱"],["el cubo", "Eimer", "🪣"],["el abono", "Mist", "💩"],
+    ["la manzana", "Apfel", "🍎"],["la zanahoria", "Rüebli", "🥕"],["la patata", "Kartoffel", "🥔"]
+  ]},
+  strand: { name: "🏖️ Strand", words: [
+    ["la playa", "Strand", "🏖️"],["el mar", "Meer", "🌊"],["la ola", "Welle", "🏄"],
+    ["la arena", "Sand", "🏜️"],["la concha", "Muschel", "🐚"],["el cangrejo", "Krebs", "🦀"],
+    ["la estrella de mar", "Seestern", "⭐"],["la sombrilla", "Sonnenschirm", "⛱️"],["la toalla de playa", "Strandtuch", "🧖"],
+    ["el bañador", "Badehose", "🩳"],["el bikini", "Bikini", "👙"],["las gafas de sol", "Sonnenbrille", "🕶️"],
+    ["la crema solar", "Sonnencreme", "🧴"],["el sombrero", "Sonnenhut", "👒"],["las chanclas", "Flipflops", "🩴"],
+    ["el cubo", "Eimer", "🪣"],["la pala", "Schäufelchen", "⛏️"],["el castillo de arena", "Sandburg", "🏰"],
+    ["el barco", "Schiff", "🚢"],["el velero", "Segelboot", "⛵"],["el socorrista", "Bademeister", "🏊⛑️"],
+    ["el flotador", "Schwimmring", "🏊"],["la tabla de surf", "Surfbrett", "🏄"],["la medusa", "Qualle", "🐙"],
+    ["la gaviota", "Möwe", "🐦"],["el faro", "Leuchtturm", "🗼"],["la marea", "Gezeiten", "🌗"],
+    ["el helado", "Glace", "🍦"],["el calor", "Hitze", "🥵"],["nadar", "schwimmen", "🏊"],
+    ["bucear", "tauchen", "🤿"],["la aleta", "Flosse", "🦶"],["la nevera portátil", "Kühlbox", "🧊"]
+  ]},
+  schule: { name: "🏫 Schule", words: [
+    ["la escuela", "Schule", "🏫"],["el profesor", "Lehrer", "🧑‍🏫"],["el alumno", "Schüler", "🧑‍🎓"],
+    ["la clase", "Klasse", "👥"],["la pizarra", "Wandtafel", "📋"],["la tiza", "Kreide", "🖍️"],
+    ["el libro", "Buch", "📖"],["el cuaderno", "Heft", "📓"],["el lápiz", "Bleistift", "✏️"],
+    ["el bolígrafo", "Kugelschreiber", "🖊️"],["la goma", "Radiergummi", "🧽"],["la regla", "Lineal", "📏"],
+    ["las tijeras", "Schere", "✂️"],["el pegamento", "Leim", "🧴"],["la mochila", "Schulsack", "🎒"],
+    ["el estuche", "Etui", "👝"],["el pupitre", "Schulbank", "🪑"],["la nota", "Note", "6️⃣"],
+    ["el examen", "Prüfung", "📝"],["los deberes", "Hausaufgaben", "✏️📓"],["el recreo", "Pause", "⏱️"],
+    ["el patio", "Pausenplatz", "🏃"],["la biblioteca", "Bibliothek", "📚"],["el ordenador", "Computer", "💻"],
+    ["el mapa", "Landkarte", "🗺️"],["el globo terráqueo", "Globus", "🌐"],["la calculadora", "Taschenrechner", "🧮"],
+    ["el horario", "Stundenplan", "📅"],["las vacaciones", "Ferien", "🏖️"],["la campana", "Schulglocke", "🔔"],
+    ["el director", "Schulleiter", "🧑‍💼"],["el diccionario", "Wörterbuch", "📘"]
+  ]},
+  spital: { name: "🏥 Spital", words: [
+    ["el hospital", "Spital", "🏥"],["el médico", "Arzt", "🧑‍⚕️"],["la enfermera", "Krankenschwester", "👩‍⚕️"],
+    ["el paciente", "Patient", "🤒"],["la cama de hospital", "Spitalbett", "🛏️"],["la ambulancia", "Ambulanz", "🚑"],
+    ["la urgencia", "Notfall", "🚨"],["la medicina", "Medikament", "💊"],["la inyección", "Spritze", "💉"],
+    ["la receta", "Rezept", "📝"],["el termómetro", "Fieberthermometer", "🌡️"],["la fiebre", "Fieber", "🌡️🤒"],
+    ["el dolor", "Schmerz", "😣"],["la herida", "Wunde", "🩸"],["la venda", "Verband", "🤕"],
+    ["la tirita", "Pflaster", "🩹"],["la radiografía", "Röntgenbild", "☢️"],["la operación", "Operation", "🔪"],
+    ["el quirófano", "Operationssaal", "🏥"],["la silla de ruedas", "Rollstuhl", "🦽"],["las muletas", "Krücken", "🦯"],
+    ["la escayola", "Gips", "🦴"],["el estetoscopio", "Stethoskop", "🩺"],["la mascarilla", "Maske", "😷"],
+    ["la sala de espera", "Wartezimmer", "🪑"],["la cita", "Termin", "📅"],["el dentista", "Zahnarzt", "🦷"],
+    ["el pulso", "Puls", "💓"],["la tos", "Husten", "🤧💨"],["el resfriado", "Erkältung", "🤧"],
+    ["la vacuna", "Impfung", "💉"],["la camilla", "Bahre", "🛌"]
+  ]},
+  fest: { name: "🎉 Fest", words: [
+    ["la fiesta", "Fest", "🎉"],["el cumpleaños", "Geburtstag", "🎂"],["la tarta", "Torte", "🍰"],
+    ["la vela", "Kerze", "🕯️"],["el regalo", "Geschenk", "🎁"],["el globo", "Ballon", "🎈"],
+    ["la música", "Musik", "🎵"],["el baile", "Tanz", "💃"],["la canción", "Lied", "🎶"],
+    ["la invitación", "Einladung", "💌"],["el invitado", "Gast", "🙋"],["el confeti", "Konfetti", "🎊"],
+    ["los fuegos artificiales", "Feuerwerk", "🎆"],["la Navidad", "Weihnachten", "🎄"],["Papá Noel", "Weihnachtsmann", "🎅"],
+    ["el Año Nuevo", "Neujahr", "🥳"],["la boda", "Hochzeit", "💒"],["la novia", "Braut", "👰"],
+    ["el novio", "Bräutigam", "🤵"],["el anillo", "Ring", "💍"],["la Pascua", "Ostern", "🐣"],
+    ["el huevo de Pascua", "Osterei", "🥚"],["el disfraz", "Verkleidung", "🦸"],["la máscara", "Maske", "🎭"],
+    ["el desfile", "Umzug", "🎺🥁"],["la cena", "Festessen", "🍽️"],["el brindis", "Anstossen", "🥂"],
+    ["el champán", "Champagner", "🍾"],["la guirnalda", "Girlande", "🎏"],["el aniversario", "Jubiläum", "🏅"]
+  ]},
+  essen: { name: "🍽️ Essen", words: [
+    ["el pan", "Brot", "🍞"],["el queso", "Käse", "🧀"],["la mantequilla", "Butter", "🧈"],
+    ["el huevo", "Ei", "🥚"],["la leche", "Milch", "🥛"],["el arroz", "Reis", "🍚"],
+    ["la pasta", "Teigwaren", "🍝"],["la sopa", "Suppe", "🍲"],["la ensalada", "Salat", "🥗"],
+    ["la carne", "Fleisch", "🥩"],["el pescado", "Fisch", "🐟"],["el pollo", "Poulet", "🍗"],
+    ["la salchicha", "Wurst", "🌭"],["el jamón", "Schinken", "🥓"],["la patata", "Kartoffel", "🥔"],
+    ["las patatas fritas", "Pommes frites", "🍟"],["la pizza", "Pizza", "🍕"],["la hamburguesa", "Hamburger", "🍔"],
+    ["el bocadillo", "Sandwich", "🥪"],["la manzana", "Apfel", "🍎"],["la naranja", "Orange", "🍊"],
+    ["el plátano", "Banane", "🍌"],["las uvas", "Trauben", "🍇"],["la fresa", "Erdbeere", "🍓"],
+    ["el limón", "Zitrone", "🍋"],["la zanahoria", "Rüebli", "🥕"],["el tomate", "Tomate", "🍅"],
+    ["la cebolla", "Zwiebel", "🧅"],["el pastel", "Kuchen", "🍰"],["el chocolate", "Schokolade", "🍫"],
+    ["el helado", "Glace", "🍦"],["el agua", "Wasser", "💧"],["el zumo", "Saft", "🧃"],
+    ["el café", "Kaffee", "☕"],["el té", "Tee", "🍵"],["la cerveza", "Bier", "🍺"],
+    ["el vino", "Wein", "🍷"],["la sal", "Salz", "🧂"]
+  ]},
+  einkauf: { name: "🛒 Einkaufsladen", words: [
+    ["la tienda", "Laden", "🏪"],["el supermercado", "Supermarkt", "🏬"],["el carrito", "Einkaufswagen", "🛒"],
+    ["la cesta", "Einkaufskorb", "🧺"],["la bolsa", "Tragtasche", "🛍️"],["la caja", "Kasse", "💶"],
+    ["el cajero", "Kassierer", "🧑‍💼💶"],["el dinero", "Geld", "💰"],["el billete de banco", "Banknote", "💵"],
+    ["la moneda", "Münze", "🪙"],["la tarjeta", "Kreditkarte", "💳"],["el precio", "Preis", "🏷️"],
+    ["la oferta", "Aktion", "🔖"],["el recibo", "Kassenzettel", "🧾"],["el cambio", "Rückgeld", "🪙↩️"],
+    ["la lista de la compra", "Einkaufszettel", "📝"],["la estantería", "Gestell", "🗄️"],["la panadería", "Bäckerei", "🥖"],
+    ["la carnicería", "Metzgerei", "🥩"],["la farmacia", "Apotheke", "💊"],["la librería", "Buchhandlung", "📚"],
+    ["la frutería", "Gemüseladen", "🥦🍎"],["el mercado", "Markt", "🧺"],["el vendedor", "Verkäufer", "🧑‍💼"],
+    ["el cliente", "Kunde", "🙋"],["barato", "billig", "🤑"],["caro", "teuer", "💎"],
+    ["abierto", "offen", "🟢"],["cerrado", "geschlossen", "🔴"],["la báscula", "Waage", "⚖️"],
+    ["la bolsa de plástico", "Plastiksack", "🛍️"]
+  ]},
+  kleidung: { name: "👕 Kleidung", words: [
+    ["la camiseta", "T-Shirt", "👕"],["la camisa", "Hemd", "👔"],["el pantalón", "Hose", "👖"],
+    ["la falda", "Rock", "🩱"],["el vestido", "Kleid", "👗"],["el jersey", "Pullover", "🧶"],
+    ["la chaqueta", "Jacke", "🧥"],["el abrigo", "Mantel", "🧥"],["los calcetines", "Socken", "🧦"],
+    ["los zapatos", "Schuhe", "👞"],["las zapatillas de deporte", "Turnschuhe", "👟"],["las botas", "Stiefel", "🥾"],
+    ["los guantes", "Handschuhe", "🧤"],["la bufanda", "Schal", "🧣"],["el gorro", "Mütze", "🧢"],
+    ["el sombrero", "Hut", "👒"],["el cinturón", "Gürtel", "🔗"],["la corbata", "Krawatte", "👔"],
+    ["las gafas", "Brille", "👓"],["el bolso", "Handtasche", "👜"],["el bañador", "Badehose", "🩳"],
+    ["la ropa interior", "Unterwäsche", "🩲"],["el impermeable", "Regenjacke", "☔"],["el traje", "Anzug", "🤵"],
+    ["los vaqueros", "Jeans", "👖"],["el chaleco", "Weste", "🦺"],["el pañuelo", "Taschentuch", "🤧"],
+    ["el botón", "Knopf", "🔘"],["la cremallera", "Reissverschluss", "🤐"],["el bolsillo", "Hosentasche", "👖"],
+    ["la manga", "Ärmel", "👚"],["el cuello", "Kragen", "👔"],["la talla", "Grösse", "📏"],
+    ["la sandalia", "Sandale", "🩴"],["el reloj", "Armbanduhr", "⌚"],["el collar", "Halskette", "📿"]
+  ]},
+  berufe: { name: "👷 Berufe", words: [
+    ["el médico", "Arzt", "🧑‍⚕️"],["la enfermera", "Krankenschwester", "👩‍⚕️"],["el profesor", "Lehrer", "🧑‍🏫"],
+    ["el policía", "Polizist", "👮"],["el bombero", "Feuerwehrmann", "🧑‍🚒"],["el cocinero", "Koch", "🧑‍🍳"],
+    ["el panadero", "Bäcker", "🧑‍🍳🥖"],["el carnicero", "Metzger", "🔪🥩"],["el camarero", "Kellner", "🤵🍽️"],
+    ["el cartero", "Briefträger", "📬"],["el conductor", "Chauffeur", "🚌"],["el piloto", "Pilot", "🧑‍✈️"],
+    ["el agricultor", "Bauer", "🧑‍🌾"],["el albañil", "Maurer", "👷🧱"],["el carpintero", "Schreiner", "👷🪚"],
+    ["el electricista", "Elektriker", "👷⚡"],["el fontanero", "Sanitärinstallateur", "👷🔧"],["el mecánico", "Mechaniker", "🧑‍🔧"],
+    ["el pintor", "Maler", "🧑‍🎨"],["el peluquero", "Coiffeur", "💇"],["el dentista", "Zahnarzt", "🧑‍⚕️🦷"],
+    ["el abogado", "Anwalt", "🧑‍💼⚖️"],["el juez", "Richter", "👨‍⚖️"],["el científico", "Wissenschaftler", "🧑‍🔬"],
+    ["el ingeniero", "Ingenieur", "👷📐"],["el programador", "Programmierer", "🧑‍💻"],["el músico", "Musiker", "🎸"],
+    ["el actor", "Schauspieler", "🎭"],["el cantante", "Sänger", "🧑‍🎤"],["el periodista", "Journalist", "📰"],
+    ["el fotógrafo", "Fotograf", "📷"],["el veterinario", "Tierarzt", "🧑‍⚕️🐕"],["el soldado", "Soldat", "🪖"],
+    ["el astronauta", "Astronaut", "🧑‍🚀"],["el pescador", "Fischer", "🎣"],["el vendedor", "Verkäufer", "🧑‍💼"]
+  ]},
+  familie: { name: "👨‍👩‍👧 Familie", words: [
+    ["la madre", "Mutter", "👩"],["el padre", "Vater", "👨"],["los padres", "Eltern", "👫"],
+    ["el hijo", "Sohn", "👦"],["la hija", "Tochter", "👧"],["el hermano", "Bruder", "🧒"],
+    ["la hermana", "Schwester", "👩‍🦰"],["el abuelo", "Grossvater", "👴"],["la abuela", "Grossmutter", "👵"],
+    ["el nieto", "Enkel", "👴👦"],["el tío", "Onkel", "🧔"],["la tía", "Tante", "👩‍🦱"],
+    ["el primo", "Cousin", "👦"],["el sobrino", "Neffe", "👦"],["la sobrina", "Nichte", "👧"],
+    ["el marido", "Ehemann", "🤵"],["la mujer", "Ehefrau", "👰"],["el bebé", "Baby", "👶"],
+    ["el niño", "Kind", "🧒"],["la familia", "Familie", "👨‍👩‍👧‍👦"],["el suegro", "Schwiegervater", "👨‍🦳"],
+    ["la suegra", "Schwiegermutter", "👩‍🦳"],["el cuñado", "Schwager", "🧑"],["el padrino", "Götti", "🎁"],
+    ["la madrina", "Gotte", "🎀"],["el gemelo", "Zwilling", "👯"],["el amigo", "Freund", "🧑‍🤝‍🧑"],
+    ["el vecino", "Nachbar", "🏘️"],["la pareja", "Paar", "💑"],["la persona", "Person", "🧍"]
+  ]},
+  erledigen: { name: "✅ Dinge erledigen", words: [
+    ["comer", "essen", "🍽️"],["beber", "trinken", "🥤"],["dormir", "schlafen", "😴"],
+    ["levantarse", "aufstehen", "🧍"],["lavarse", "sich waschen", "🧼"],["ducharse", "duschen", "🚿"],
+    ["vestirse", "sich anziehen", "👕"],["cocinar", "kochen", "🍳"],["limpiar", "putzen", "🧹"],
+    ["trabajar", "arbeiten", "💼"],["estudiar", "lernen", "📚"],["leer", "lesen", "📖"],
+    ["escribir", "schreiben", "✍️"],["hablar", "sprechen", "🗣️"],["escuchar", "zuhören", "👂"],
+    ["mirar", "schauen", "👀"],["caminar", "gehen", "🚶"],["correr", "rennen", "🏃"],
+    ["conducir", "fahren", "🚗"],["comprar", "kaufen", "🛒"],["pagar", "bezahlen", "💳"],
+    ["abrir", "öffnen", "🔓"],["cerrar", "schliessen", "🔒"],["llamar", "anrufen", "📞"],
+    ["esperar", "warten", "⏳"],["pensar", "denken", "🤔"],["ayudar", "helfen", "🤝"],
+    ["jugar", "spielen", "🎮"],["cantar", "singen", "🎤"],["bailar", "tanzen", "💃"],
+    ["reír", "lachen", "😂"],["llorar", "weinen", "😢"],["llegar", "ankommen", "🛬"],
+    ["lavar la ropa", "Wäsche waschen", "🧺"],["planchar", "bügeln", "👔"],["tirar la basura", "Abfall wegbringen", "🗑️"],
+    ["recoger", "aufräumen", "📦"],["llevar", "tragen", "🎒"]
+  ]},
+  gegenteil: { name: "↔️ Gegenteiliges", words: [
+    ["lleno ↔ vacío", "voll ↔ leer", "🥛↔⬜"],["grande ↔ pequeño", "gross ↔ klein", "🐘↔🐁"],["alto ↔ bajo", "hoch ↔ tief", "🗼↔🕳️"],
+    ["caliente ↔ frío", "heiss ↔ kalt", "🔥↔🧊"],["día ↔ noche", "Tag ↔ Nacht", "☀️↔🌙"],["abierto ↔ cerrado", "offen ↔ geschlossen", "🔓↔🔒"],
+    ["rápido ↔ lento", "schnell ↔ langsam", "🐇↔🐢"],["pesado ↔ ligero", "schwer ↔ leicht", "🪨↔🪶"],["viejo ↔ joven", "alt ↔ jung", "👴↔👦"],
+    ["bueno ↔ malo", "gut ↔ schlecht", "👍↔👎"],["limpio ↔ sucio", "sauber ↔ schmutzig", "✨↔🗑️"],["feliz ↔ triste", "glücklich ↔ traurig", "😀↔😢"],
+    ["fuerte ↔ débil", "stark ↔ schwach", "💪↔🥀"],["duro ↔ blando", "hart ↔ weich", "🧱↔🧸"],["seco ↔ mojado", "trocken ↔ nass", "🏜️↔💧"],
+    ["arriba ↔ abajo", "oben ↔ unten", "⬆️↔⬇️"],["dentro ↔ fuera", "drinnen ↔ draussen", "🏠↔🌳"],["cerca ↔ lejos", "nah ↔ weit", "📍↔🔭"],
+    ["largo ↔ corto", "lang ↔ kurz", "📏↔✂️"],["ancho ↔ estrecho", "breit ↔ schmal", "↔️↔🤏"],["caro ↔ barato", "teuer ↔ billig", "💎↔🏷️"],
+    ["fácil ↔ difícil", "leicht ↔ schwierig", "😌↔🧗"],["claro ↔ oscuro", "hell ↔ dunkel", "💡↔🌑"],["ruidoso ↔ silencioso", "laut ↔ leise", "📢↔🤫"],
+    ["antes ↔ después", "vorher ↔ nachher", "⏪↔⏩"],["empezar ↔ terminar", "anfangen ↔ aufhören", "▶️↔⏹️"],["sí ↔ no", "ja ↔ nein", "✅↔❌"],
+    ["ganar ↔ perder", "gewinnen ↔ verlieren", "🏆↔💔"],["subir ↔ bajar", "hinaufgehen ↔ hinuntergehen", "🔼↔🔽"],["encender ↔ apagar", "einschalten ↔ ausschalten", "💡↔🔌"],
+    ["temprano ↔ tarde", "früh ↔ spät", "🌅↔🌃"],["mucho ↔ poco", "viel ↔ wenig", "🍎🍎🍎↔🍎"]
+  ]},
+  jahreszeiten: { name: "🍂 Jahreszeiten", words: [
+    ["la primavera", "Frühling", "🌸"],["el verano", "Sommer", "☀️"],["el otoño", "Herbst", "🍂"],
+    ["el invierno", "Winter", "❄️"],["la estación del año", "Jahreszeit", "🌸☀️🍂❄️"],["el año", "Jahr", "📆"],
+    ["el mes", "Monat", "🗓️"],["la semana", "Woche", "📅"],["el día", "Tag", "🌞"],
+    ["el calor", "Hitze", "🥵"],["el frío", "Kälte", "🥶"],["la lluvia", "Regen", "🌧️"],
+    ["la nieve", "Schnee", "☃️"],["el viento", "Wind", "💨"],["la nube", "Wolke", "☁️"],
+    ["el sol", "Sonne", "🌤️"],["la tormenta", "Gewitter", "⛈️"],["la niebla", "Nebel", "🌫️"],
+    ["el hielo", "Eis", "🧊"],["el muñeco de nieve", "Schneemann", "⛄"],["la hoja seca", "Herbstlaub", "🍁"],
+    ["la cosecha", "Ernte", "🌾"],["el paraguas", "Regenschirm", "☂️"],["el arco iris", "Regenbogen", "🌈"],
+    ["el relámpago", "Blitz", "⚡"],["el trueno", "Donner", "🌩️"],["la temperatura", "Temperatur", "🌡️"],
+    ["las flores", "Blüten", "🌼"]
+  ]},
+  sport: { name: "⚽ Sport", words: [
+    ["el fútbol", "Fussball", "⚽"],["el baloncesto", "Basketball", "🏀"],["el tenis", "Tennis", "🎾"],
+    ["la natación", "Schwimmen", "🏊"],["el ciclismo", "Velofahren", "🚴"],["el esquí", "Skifahren", "⛷️"],
+    ["el snowboard", "Snowboarden", "🏂"],["el patinaje", "Eislaufen", "⛸️"],["el hockey sobre hielo", "Eishockey", "🏒"],
+    ["el balonmano", "Handball", "🤾"],["el voleibol", "Volleyball", "🏐"],["el golf", "Golf", "⛳"],
+    ["el boxeo", "Boxen", "🥊"],["el judo", "Judo", "🥋"],["el atletismo", "Leichtathletik", "🏃"],
+    ["la gimnasia", "Turnen", "🤸"],["el yoga", "Yoga", "🧘"],["el remo", "Rudern", "🚣"],
+    ["la vela", "Segeln", "⛵"],["el surf", "Surfen", "🏄"],["la escalada", "Klettern", "🧗"],
+    ["el senderismo", "Wandern", "🥾"],["el equipo", "Mannschaft", "👥"],["la raqueta", "Tennisschläger", "🏸"],
+    ["el gol", "Tor", "🥅"],["el árbitro", "Schiedsrichter", "🟨"],["la medalla", "Medaille", "🥇"],
+    ["el trofeo", "Pokal", "🏆"],["el estadio", "Stadion", "🏟️"],["el entrenador", "Trainer", "🧑‍🏫"],
+    ["la carrera", "Rennen", "🏁"],["el tiro con arco", "Bogenschiessen", "🏹"],["el tenis de mesa", "Tischtennis", "🏓"],
+    ["el bádminton", "Badminton", "🏸"]
+  ]},
+  haustiere: { name: "🐶 Haustiere", words: [
+    ["el perro", "Hund", "🐕"],["el gato", "Katze", "🐈"],["el cachorro", "Welpe", "🐶"],
+    ["el gatito", "Kätzchen", "🐱"],["el conejo", "Kaninchen", "🐇"],["el hámster", "Hamster", "🐹"],
+    ["el cobaya", "Meerschweinchen", "🐹"],["el periquito", "Wellensittich", "🦜"],["el canario", "Kanarienvogel", "🐤"],
+    ["el pez de colores", "Goldfisch", "🐠"],["el acuario", "Aquarium", "🐠🐟"],["la tortuga", "Schildkröte", "🐢"],
+    ["el caballo", "Pferd", "🐴"],["la jaula", "Käfig", "⛓️"],["la correa", "Leine", "🦮"],
+    ["el collar", "Halsband", "📿"],["el hueso", "Knochen", "🦴"],["la pelota", "Ball", "🎾"],
+    ["la comida para perros", "Hundefutter", "🥫"],["el comedero", "Futternapf", "🥣"],["la cesta del perro", "Körbchen", "🧺"],
+    ["la bandeja de arena", "Katzenklo", "📦"],["el rascador", "Kratzbaum", "🌳"],["el veterinario", "Tierarzt", "🩺"],
+    ["la pata", "Pfote", "🐾"],["la cola", "Schwanz", "🦊"],["el pelaje", "Fell", "🐻"],
+    ["ladrar", "bellen", "🐕💬"],["maullar", "miauen", "🐈💬"],["pasear", "spazieren gehen", "🚶"],
+    ["el hurón", "Frettchen", "🐾"],["la rata", "Ratte", "🐀"]
+  ]},
+  farben: { name: "🎨 Farben", words: [
+    ["rojo", "rot", "", "color:#e02b2b"],["azul", "blau", "", "color:#2f5fd0"],["verde", "grün", "", "color:#2e9b4e"],
+    ["amarillo", "gelb", "", "color:#f5d020"],["naranja", "orange", "", "color:#f28c1e"],["morado", "violett", "", "color:#8e44ad"],
+    ["rosa", "rosa", "", "color:#f78fb3"],["marrón", "braun", "", "color:#7a4b26"],["negro", "schwarz", "", "color:#1b1b1b"],
+    ["blanco", "weiss", "", "color:#ffffff"],["gris", "grau", "", "color:#8d8d8d"],["turquesa", "türkis", "", "color:#1abc9c"],
+    ["beige", "beige", "", "color:#e8d5b0"],["dorado", "golden", "", "color:#d4af37"],["plateado", "silbern", "", "color:#c0c0c0"],
+    ["azul claro", "hellblau", "", "color:#8ecae6"],["azul oscuro", "dunkelblau", "", "color:#1c2f6e"],["verde claro", "hellgrün", "", "color:#9be37b"],
+    ["verde oscuro", "dunkelgrün", "", "color:#1f5d36"],["lila", "lila", "", "color:#c8a2e0"],["granate", "weinrot", "", "color:#800020"],
+    ["claro", "hell", "", "color:#fff3b0"],["oscuro", "dunkel", "", "color:#2a2a3a"],["el color", "Farbe", "🎨"],
+    ["el arco iris", "Regenbogen", "🌈"],["de colores", "bunt", "🎏"]
+  ]},
+  formen: { name: "🔷 Formen", words: [
+    ["el círculo", "Kreis", "", "shape:circle"],["el cuadrado", "Quadrat", "", "shape:square"],["el triángulo", "Dreieck", "", "shape:triangle"],
+    ["el rectángulo", "Rechteck", "", "shape:rectangle"],["el óvalo", "Oval", "", "shape:oval"],["la estrella", "Stern", "", "shape:star"],
+    ["el corazón", "Herz", "", "shape:heart"],["el rombo", "Raute", "", "shape:rhombus"],["el pentágono", "Fünfeck", "", "shape:pentagon"],
+    ["el hexágono", "Sechseck", "", "shape:hexagon"],["el octógono", "Achteck", "", "shape:octagon"],["el trapecio", "Trapez", "", "shape:trapezoid"],
+    ["la cruz", "Kreuz", "", "shape:cross"],["la flecha", "Pfeil", "", "shape:arrow"],["el semicírculo", "Halbkreis", "", "shape:semicircle"],
+    ["la media luna", "Mondsichel", "", "shape:crescent"],["el anillo", "Ring", "", "shape:ring"],["la espiral", "Spirale", "", "shape:spiral"],
+    ["el zigzag", "Zickzack", "", "shape:zigzag"],["la línea", "Linie", "", "shape:line"],["el punto", "Punkt", "", "shape:dot"],
+    ["el cubo", "Würfel", "", "shape:cube"],["la esfera", "Kugel", "", "shape:sphere"],["el cilindro", "Zylinder", "", "shape:cylinder"],
+    ["el cono", "Kegel", "", "shape:cone"],["la pirámide", "Pyramide", "", "shape:pyramid"]
+  ]},
+  vergnuegungspark: { name: "🎢 Vergnügungspark", words: [
+    ["la montaña rusa", "Achterbahn", "🎢"],["la noria", "Riesenrad", "🎡"],["el tiovivo", "Karussell", "🎠"],
+    ["los coches de choque", "Autoscooter", "🚗💥"],["el tren fantasma", "Geisterbahn", "👻"],["el algodón de azúcar", "Zuckerwatte", "🍭"],
+    ["las palomitas", "Popcorn", "🍿"],["el globo", "Ballon", "🎈"],["la entrada", "Eintrittskarte", "🎟️"],
+    ["la cola", "Warteschlange", "🧍🧍🧍"],["el parque de atracciones", "Vergnügungspark", "🎢🎡"],["la atracción", "Attraktion", "🤩"],
+    ["el tobogán acuático", "Wasserrutsche", "🏊💦"],["el tiro al blanco", "Schiessbude", "🎯"],["el peluche", "Plüschtier", "🧸"],
+    ["el premio", "Preis", "🏆"],["la feria", "Jahrmarkt", "🎪"],["la torre de caída", "Freifallturm", "🗼⬇️"],
+    ["el miedo", "Angst", "😱"],["la risa", "Lachen", "😂"],["el arnés", "Sicherheitsbügel", "🔒"],
+    ["el helado", "Glace", "🍦"],["la altura", "Höhe", "🗼"],["la velocidad", "Geschwindigkeit", "💨"],
+    ["el laberinto de espejos", "Spiegelkabinett", "🪞"],["el pase", "Tageskarte", "🎫"],["la mascota", "Maskottchen", "🐻"],
+    ["el espectáculo", "Show", "🎭"],["las luces", "Lichter", "✨"],["el castillo hinchable", "Hüpfburg", "🏰"],
+    ["el laberinto", "Labyrinth", "🌀"]
+  ]},
+  zirkus: { name: "🎪 Zirkus", words: [
+    ["el circo", "Zirkus", "🎪🤡"],["la carpa", "Zirkuszelt", "🎪"],["el payaso", "Clown", "🤡"],
+    ["el mago", "Zauberer", "🧙"],["la magia", "Zauberei", "✨"],["el truco", "Trick", "🪄"],
+    ["el sombrero de copa", "Zylinderhut", "🎩"],["el malabarista", "Jongleur", "🤹"],["el acróbata", "Akrobat", "🤸"],
+    ["el equilibrista", "Seiltänzer", "🧗"],["la cuerda floja", "Drahtseil", "➰"],["el trapecio", "Trapez", "🪢"],
+    ["el domador", "Dompteur", "🦁"],["el látigo", "Peitsche", "〰️"],["el aro", "Reifen", "⭕"],
+    ["la bola", "Kugel", "🔮"],["el monociclo", "Einrad", "🚲"],["la pista", "Manege", "🟤"],
+    ["el público", "Publikum", "👥"],["el aplauso", "Applaus", "👏"],["la trompeta", "Trompete", "🎺"],
+    ["el tambor", "Trommel", "🥁"],["el director del circo", "Zirkusdirektor", "🤵🎩"],["el cañón", "Kanone", "💥"],
+    ["la nariz roja", "rote Nase", "🔴"],["el fuego", "Feuer", "🔥"],["el tragafuegos", "Feuerschlucker", "🧑🔥"],
+    ["la función", "Vorstellung", "🎭"],["las luces", "Scheinwerfer", "🔦"],["el disfraz", "Kostüm", "🦸"],
+    ["la fuerza", "Kraft", "💪"],["el hombre fuerte", "Kraftmensch", "🏋️"]
+  ]},
+  koerper2: { name: "🖐️ Körper – Details", words: [
+    ["el pulgar", "Daumen", "", "hand:thumb"],["el dedo índice", "Zeigefinger", "", "hand:index"],["el dedo corazón", "Mittelfinger", "", "hand:middle"],
+    ["el dedo anular", "Ringfinger", "", "hand:ring"],["el dedo meñique", "kleiner Finger", "", "hand:pinky"],["la palma de la mano", "Handfläche", "", "hand:palm"],
+    ["la muñeca", "Handgelenk", "", "hand:wrist"],["el puño", "Faust", "✊"],["la ceja", "Augenbraue", "", "eye:brow"],
+    ["la pestaña", "Wimper", "", "eye:lash"],["el párpado", "Augenlid", "", "eye:lid"],["la pupila", "Pupille", "", "eye:pupil"],
+    ["la mejilla", "Wange", "", "face:cheek"],["la barbilla", "Kinn", "", "face:chin"],["el labio", "Lippe", "", "face:lip"],
+    ["la fosa nasal", "Nasenloch", "", "face:nostril"],["el lóbulo de la oreja", "Ohrläppchen", "", "face:earlobe"],["la sien", "Schläfe", "", "face:temple"],
+    ["la mandíbula", "Kiefer", "", "face:jaw"],["el pecho", "Brust", "", "body:chest"],["el ombligo", "Bauchnabel", "", "body:navel"],
+    ["la cintura", "Taille", "", "body:waist"],["la cadera", "Hüfte", "", "body:hip"],["la axila", "Achselhöhle", "", "body:armpit"],
+    ["el muslo", "Oberschenkel", "", "body:thigh"],["la nuca", "Nacken", "", "back:nape"],["la columna vertebral", "Wirbelsäule", "", "back:spine"],
+    ["las nalgas", "Gesäss", "", "back:buttocks"],["la pantorrilla", "Wade", "", "back:calf"],["el tobillo", "Fussknöchel", "", "footside:ankle"],
+    ["el talón", "Ferse", "", "footside:heel"],["la planta del pie", "Fusssohle", "", "footside:sole"],["el músculo", "Muskel", "💪"]
+  ]},
+  zahlen: { name: "🔢 Zahlen", words: [
+    ["cero", "null", "", "num:0"],["uno", "eins", "", "num:1"],["dos", "zwei", "", "num:2"],
+    ["tres", "drei", "", "num:3"],["cuatro", "vier", "", "num:4"],["cinco", "fünf", "", "num:5"],
+    ["seis", "sechs", "", "num:6"],["siete", "sieben", "", "num:7"],["ocho", "acht", "", "num:8"],
+    ["nueve", "neun", "", "num:9"],["diez", "zehn", "", "num:10"],["once", "elf", "", "num:11"],
+    ["doce", "zwölf", "", "num:12"],["trece", "dreizehn", "", "num:13"],["catorce", "vierzehn", "", "num:14"],
+    ["quince", "fünfzehn", "", "num:15"],["dieciséis", "sechzehn", "", "num:16"],["diecisiete", "siebzehn", "", "num:17"],
+    ["dieciocho", "achtzehn", "", "num:18"],["diecinueve", "neunzehn", "", "num:19"],["veinte", "zwanzig", "", "num:20"],
+    ["veintiuno", "einundzwanzig", "", "num:21"],["treinta", "dreissig", "", "num:30"],["cuarenta", "vierzig", "", "num:40"],
+    ["cincuenta", "fünfzig", "", "num:50"],["sesenta", "sechzig", "", "num:60"],["setenta", "siebzig", "", "num:70"],
+    ["ochenta", "achtzig", "", "num:80"],["noventa", "neunzig", "", "num:90"],["cien", "hundert", "", "num:100"],
+    ["quinientos", "fünfhundert", "", "num:500"],["mil", "tausend", "", "num:1'000"],["un millón", "eine Million", "", "num:1'000'000"]
+  ]},
+  wochentage: { name: "📅 Wochentage", words: [
+    ["el lunes", "Montag", "", "week:1"],["el martes", "Dienstag", "", "week:2"],["el miércoles", "Mittwoch", "", "week:3"],
+    ["el jueves", "Donnerstag", "", "week:4"],["el viernes", "Freitag", "", "week:5"],["el sábado", "Samstag", "", "week:6"],
+    ["el domingo", "Sonntag", "", "week:7"],["la semana", "Woche", "", "week:all"],["el fin de semana", "Wochenende", "", "week:we"],
+    ["el día laborable", "Werktag", "", "week:wd"],["hoy", "heute", "👉📅"],["mañana", "morgen", "➡️📅"],
+    ["ayer", "gestern", "⬅️📅"],["pasado mañana", "übermorgen", "⏩📅"],["anteayer", "vorgestern", "⏪📅"],
+    ["el día", "Tag", "☀️"],["la mañana", "Vormittag", "🌅"],["el mediodía", "Mittag", "🕛☀️"],
+    ["la tarde", "Nachmittag", "☀️🕒"],["la noche", "Nacht", "🌙"],["la medianoche", "Mitternacht", "🕛🌙"],
+    ["la hora", "Stunde", "⏰"],["el minuto", "Minute", "⏱️"]
+  ]},
+  monate: { name: "🗓️ Monate", words: [
+    ["enero", "Januar", "", "month:1"],["febrero", "Februar", "", "month:2"],["marzo", "März", "", "month:3"],
+    ["abril", "April", "", "month:4"],["mayo", "Mai", "", "month:5"],["junio", "Juni", "", "month:6"],
+    ["julio", "Juli", "", "month:7"],["agosto", "August", "", "month:8"],["septiembre", "September", "", "month:9"],
+    ["octubre", "Oktober", "", "month:10"],["noviembre", "November", "", "month:11"],["diciembre", "Dezember", "", "month:12"],
+    ["el mes", "Monat", "🗓️"],["el año", "Jahr", "", "month:all"],["el calendario", "Kalender", "📅"],
+    ["la fecha", "Datum", "🔢📅"]
+  ]}
+};
+const GROUPS = [["Natur & Tiere", ["tiere", "haustiere", "zoo", "bauernhof", "landschaft", "jahreszeiten"]], ["Mensch", ["koerper", "koerper2", "familie", "kleidung", "berufe", "erledigen"]], ["Zuhause", ["badezimmer", "wohnzimmer", "schlafzimmer", "eingang", "kueche", "garten", "werkstatt"]], ["Unterwegs", ["strasse", "bahnhof", "tankstelle", "flughafen", "park", "strand"]], ["Orte", ["schule", "spital", "einkauf"]], ["Essen & Feste", ["essen", "fest"]], ["Freizeit", ["sport", "vergnuegungspark", "zirkus"]], ["Zahlen & Zeit", ["zahlen", "wochentage", "monate"]], ["Grundlagen", ["gegenteil", "farben", "formen"]]];
+Object.values(TOPICS).forEach(t => t.words = t.words.map(([es,de,emoji,img],id)=>({id,es,de,emoji,img})));
+// Übersetzungen Englisch / Französisch / Italienisch (zugeordnet über das deutsche Wort)
+const TR = {"tiere":{"Hund":["dog","le chien","il cane"],"Katze":["cat","le chat","il gatto"],"Pferd":["horse","le cheval","il cavallo"],"Kuh":["cow","la vache","la mucca"],"Schwein":["pig","le cochon","il maiale"],"Schaf":["sheep","le mouton","la pecora"],"Ziege":["goat","la chèvre","la capra"],"Huhn":["chicken","la poule","la gallina"],"Ente":["duck","le canard","l'anatra"],"Kaninchen":["rabbit","le lapin","il coniglio"],"Maus":["mouse","la souris","il topo"],"Vogel":["bird","l'oiseau","l'uccello"],"Fisch":["fish","le poisson","il pesce"],"Schildkröte":["turtle","la tortue","la tartaruga"],"Schlange":["snake","le serpent","il serpente"],"Frosch":["frog","la grenouille","la rana"],"Elefant":["elephant","l'éléphant","l'elefante"],"Löwe":["lion","le lion","il leone"],"Tiger":["tiger","le tigre","la tigre"],"Bär":["bear","l'ours","l'orso"],"Affe":["monkey","le singe","la scimmia"],"Giraffe":["giraffe","la girafe","la giraffa"],"Wolf":["wolf","le loup","il lupo"],"Fuchs":["fox","le renard","la volpe"],"Delfin":["dolphin","le dauphin","il delfino"],"Wal":["whale","la baleine","la balena"],"Hai":["shark","le requin","lo squalo"],"Schmetterling":["butterfly","le papillon","la farfalla"],"Biene":["bee","l'abeille","l'ape"],"Spinne":["spider","l'araignée","il ragno"]},"koerper":{"Kopf":["head","la tête","la testa"],"Haar":["hair","les cheveux","i capelli"],"Gesicht":["face","le visage","il viso"],"Stirn":["forehead","le front","la fronte"],"Auge":["eye","l'œil","l'occhio"],"Ohr":["ear","l'oreille","l'orecchio"],"Nase":["nose","le nez","il naso"],"Mund":["mouth","la bouche","la bocca"],"Zahn":["tooth","la dent","il dente"],"Zunge":["tongue","la langue","la lingua"],"Bart":["beard","la barbe","la barba"],"Hals":["neck","le cou","il collo"],"Schulter":["shoulder","l'épaule","la spalla"],"Arm":["arm","le bras","il braccio"],"Ellbogen":["elbow","le coude","il gomito"],"Hand":["hand","la main","la mano"],"Finger":["finger","le doigt","il dito"],"Nagel":["nail","l'ongle","l'unghia"],"Rücken":["back","le dos","la schiena"],"Bauch":["belly","le ventre","la pancia"],"Bein":["leg","la jambe","la gamba"],"Knie":["knee","le genou","il ginocchio"],"Fuss":["foot","le pied","il piede"],"Zeh":["toe","l'orteil","il dito del piede"],"Herz":["heart","le cœur","il cuore"],"Lunge":["lung","le poumon","il polmone"],"Gehirn":["brain","le cerveau","il cervello"],"Knochen":["bone","l'os","l'osso"],"Haut":["skin","la peau","la pelle"],"Blut":["blood","le sang","il sangue"]},"badezimmer":{"Badewanne":["bathtub","la baignoire","la vasca da bagno"],"Dusche":["shower","la douche","la doccia"],"Waschbecken":["washbasin","le lavabo","il lavandino"],"Wasserhahn":["tap","le robinet","il rubinetto"],"Toilette":["toilet","les toilettes","il water"],"Spiegel":["mirror","le miroir","lo specchio"],"Seife":["soap","le savon","il sapone"],"Shampoo":["shampoo","le shampooing","lo shampoo"],"Zahnbürste":["toothbrush","la brosse à dents","lo spazzolino"],"Zahnpasta":["toothpaste","le dentifrice","il dentifricio"],"Toilettenpapier":["toilet paper","le papier toilette","la carta igienica"],"Handtuch":["towel","la serviette","l'asciugamano"],"Schwamm":["sponge","l'éponge","la spugna"],"Kamm":["comb","le peigne","il pettine"],"Föhn":["hairdryer","le sèche-cheveux","l'asciugacapelli"],"Rasierer":["razor","le rasoir","il rasoio"],"Badezimmerwaage":["bathroom scale","le pèse-personne","la bilancia pesapersone"],"Duschvorhang":["shower curtain","le rideau de douche","la tenda della doccia"],"Abfalleimer":["bin","la poubelle","il cestino"],"Waschmaschine":["washing machine","la machine à laver","la lavatrice"],"Schere":["scissors","les ciseaux","le forbici"],"Watte":["cotton wool","le coton","il cotone"],"Badematte":["bath mat","le tapis de bain","il tappetino da bagno"],"Dampf":["steam","la vapeur","il vapore"],"Warmwasser":["hot water","l'eau chaude","l'acqua calda"],"Kaltwasser":["cold water","l'eau froide","l'acqua fredda"]},"wohnzimmer":{"Sofa":["sofa","le canapé","il divano"],"Sessel":["armchair","le fauteuil","la poltrona"],"Stuhl":["chair","la chaise","la sedia"],"Tisch":["table","la table","il tavolo"],"Fernseher":["television","la télévision","il televisore"],"Fernbedienung":["remote control","la télécommande","il telecomando"],"Lampe":["lamp","la lampe","la lampada"],"Fenster":["window","la fenêtre","la finestra"],"Vorhang":["curtain","le rideau","la tenda"],"Teppich":["carpet","le tapis","il tappeto"],"Bücherregal":["bookcase","la bibliothèque","la libreria"],"Buch":["book","le livre","il libro"],"Bild":["picture","le tableau","il quadro"],"Wanduhr":["wall clock","l'horloge","l'orologio da parete"],"Pflanze":["plant","la plante","la pianta"],"Vase":["vase","le vase","il vaso"],"Cheminée":["fireplace","la cheminée","il camino"],"Kissen":["cushion","le coussin","il cuscino"],"Radio":["radio","la radio","la radio"],"Telefon":["telephone","le téléphone","il telefono"],"Computer":["computer","l'ordinateur","il computer"],"Tür":["door","la porte","la porta"],"Boden":["floor","le sol","il pavimento"],"Wand":["wall","le mur","la parete"],"Kerze":["candle","la bougie","la candela"],"Ventilator":["fan","le ventilateur","il ventilatore"],"Lautsprecher":["loudspeaker","le haut-parleur","l'altoparlante"],"Klavier":["piano","le piano","il pianoforte"],"Gesellschaftsspiel":["board game","le jeu de société","il gioco da tavolo"],"Wolldecke":["blanket","la couverture","la coperta"]},"schlafzimmer":{"Bett":["bed","le lit","il letto"],"Kopfkissen":["pillow","l'oreiller","il guanciale"],"Duvet":["duvet","la couette","il piumone"],"Leintuch":["sheet","le drap","il lenzuolo"],"Matratze":["mattress","le matelas","il materasso"],"Kleiderschrank":["wardrobe","l'armoire","l'armadio"],"Kommode":["chest of drawers","la commode","il comò"],"Schublade":["drawer","le tiroir","il cassetto"],"Nachttisch":["bedside table","la table de nuit","il comodino"],"Wecker":["alarm clock","le réveil","la sveglia"],"Nachttischlampe":["bedside lamp","la lampe de chevet","la lampada da comodino"],"Pyjama":["pyjamas","le pyjama","il pigiama"],"Finken":["slippers","les pantoufles","le pantofole"],"Spiegel":["mirror","le miroir","lo specchio"],"Kleiderbügel":["coat hanger","le cintre","la gruccia"],"Rollladen":["roller shutter","le volet roulant","la tapparella"],"Vorhang":["curtain","le rideau","la tenda"],"schlafen":["to sleep","dormir","dormire"],"Traum":["dream","le rêve","il sogno"],"Mond":["moon","la lune","la luna"],"Stern":["star","l'étoile","la stella"],"Nacht":["night","la nuit","la notte"],"Kuscheltier":["cuddly toy","la peluche","il peluche"],"Kinderbett":["cot","le lit de bébé","la culla"],"gähnen":["to yawn","bâiller","sbadigliare"],"schnarchen":["to snore","ronfler","russare"],"aufwachen":["to wake up","se réveiller","svegliarsi"],"Kleider":["clothes","les vêtements","i vestiti"]},"eingang":{"Haustür":["front door","la porte d'entrée","la porta d'ingresso"],"Klingel":["doorbell","la sonnette","il campanello"],"Schlüssel":["key","la clé","la chiave"],"Schloss":["lock","la serrure","la serratura"],"Fussmatte":["doormat","le paillasson","lo zerbino"],"Briefkasten":["letterbox","la boîte aux lettres","la cassetta delle lettere"],"Brief":["letter","la lettre","la lettera"],"Paket":["parcel","le colis","il pacco"],"Regenschirm":["umbrella","le parapluie","l'ombrello"],"Garderobe":["coat rack","le portemanteau","l'attaccapanni"],"Mantel":["coat","le manteau","il cappotto"],"Hut":["hat","le chapeau","il cappello"],"Schuhe":["shoes","les chaussures","le scarpe"],"Schuhschrank":["shoe cabinet","le meuble à chaussures","la scarpiera"],"Schal":["scarf","l'écharpe","la sciarpa"],"Handschuhe":["gloves","les gants","i guanti"],"Mütze":["cap","la casquette","il berretto"],"Spiegel":["mirror","le miroir","lo specchio"],"Treppe":["stairs","l'escalier","la scala"],"Flur":["hallway","le couloir","il corridoio"],"Türspion":["peephole","le judas","lo spioncino"],"Hausnummer":["house number","le numéro de maison","il numero civico"],"Vorplatz":["porch","le porche","il portico"],"Stufe":["step","la marche","il gradino"],"Rucksack":["backpack","le sac à dos","lo zaino"],"Velo":["bicycle","le vélo","la bicicletta"],"Helm":["helmet","le casque","il casco"],"Garage":["garage","le garage","il garage"],"Lichtschalter":["light switch","l'interrupteur","l'interruttore"],"eintreten":["to come in","entrer","entrare"],"hinausgehen":["to go out","sortir","uscire"]},"kueche":{"Küche":["kitchen","la cuisine","la cucina"],"Kühlschrank":["fridge","le frigo","il frigorifero"],"Tiefkühler":["freezer","le congélateur","il congelatore"],"Backofen":["oven","le four","il forno"],"Herdplatte":["hotplate","la plaque de cuisson","la piastra"],"Spüle":["sink","l'évier","il lavello"],"Bratpfanne":["frying pan","la poêle","la padella"],"Kochtopf":["saucepan","la casserole","la pentola"],"Messer":["knife","le couteau","il coltello"],"Gabel":["fork","la fourchette","la forchetta"],"Löffel":["spoon","la cuillère","il cucchiaio"],"Teller":["plate","l'assiette","il piatto"],"Glas":["glass","le verre","il bicchiere"],"Tasse":["cup","la tasse","la tazza"],"Weinglas":["wine glass","le verre à vin","il calice"],"Flasche":["bottle","la bouteille","la bottiglia"],"Schüssel":["bowl","le bol","la ciotola"],"Schneidebrett":["chopping board","la planche à découper","il tagliere"],"Kaffeemaschine":["coffee machine","la cafetière","la macchina del caffè"],"Mikrowelle":["microwave","le micro-ondes","il microonde"],"Geschirrspüler":["dishwasher","le lave-vaisselle","la lavastoviglie"],"Teekanne":["teapot","la théière","la teiera"],"Schürze":["apron","le tablier","il grembiule"],"Mixer":["blender","le mixeur","il frullatore"],"Reibe":["grater","la râpe","la grattugia"],"Sieb":["sieve","la passoire","il colino"],"Toaster":["toaster","le grille-pain","il tostapane"],"Tischtuch":["tablecloth","la nappe","la tovaglia"],"Serviette":["napkin","la serviette","il tovagliolo"],"Konservendose":["tin","la boîte de conserve","la scatoletta"],"Tablett":["tray","le plateau","il vassoio"],"kochen":["to cook","cuisiner","cucinare"],"backen":["to bake","cuire au four","cuocere al forno"],"schneiden":["to cut","couper","tagliare"]},"garten":{"Garten":["garden","le jardin","il giardino"],"Rasen":["lawn","la pelouse","il prato"],"Blume":["flower","la fleur","il fiore"],"Rose":["rose","la rose","la rosa"],"Tulpe":["tulip","la tulipe","il tulipano"],"Sonnenblume":["sunflower","le tournesol","il girasole"],"Baum":["tree","l'arbre","l'albero"],"Blatt":["leaf","la feuille","la foglia"],"Ast":["branch","la branche","il ramo"],"Blumentopf":["flowerpot","le pot de fleurs","il vaso da fiori"],"Giesskanne":["watering can","l'arrosoir","l'annaffiatoio"],"Gartenschlauch":["garden hose","le tuyau d'arrosage","il tubo da giardino"],"Schaufel":["shovel","la pelle","la pala"],"Rechen":["rake","le râteau","il rastrello"],"Schubkarre":["wheelbarrow","la brouette","la carriola"],"Rasenmäher":["lawnmower","la tondeuse","il tosaerba"],"Samen":["seed","la graine","il seme"],"Erde":["soil","la terre","la terra"],"Gemüsegarten":["vegetable garden","le potager","l'orto"],"Gartenbank":["garden bench","le banc","la panchina"],"Zaun":["fence","la clôture","il recinto"],"Schnecke":["snail","l'escargot","la lumaca"],"Regenwurm":["earthworm","le ver de terre","il lombrico"],"Ameise":["ant","la fourmi","la formica"],"Fliege":["fly","la mouche","la mosca"],"Schwimmbad":["swimming pool","la piscine","la piscina"],"Grill":["barbecue","le barbecue","il barbecue"],"Sonnenschirm":["parasol","le parasol","l'ombrellone"],"Schaukel":["swing","la balançoire","l'altalena"],"Nest":["nest","le nid","il nido"],"Kaktus":["cactus","le cactus","il cactus"],"Pilz":["mushroom","le champignon","il fungo"],"Gartenschere":["pruning shears","le sécateur","le cesoie"]},"werkstatt":{"Hammer":["hammer","le marteau","il martello"],"Nagel":["nail","le clou","il chiodo"],"Schraube":["screw","la vis","la vite"],"Schraubenzieher":["screwdriver","le tournevis","il cacciavite"],"Schraubenschlüssel":["spanner","la clé anglaise","la chiave inglese"],"Zange":["pliers","la pince","le pinze"],"Säge":["saw","la scie","la sega"],"Bohrmaschine":["drill","la perceuse","il trapano"],"Zahnrad":["gear wheel","l'engrenage","l'ingranaggio"],"Massband":["tape measure","le mètre ruban","il metro a nastro"],"Winkel":["set square","l'équerre","la squadra"],"Wasserwaage":["spirit level","le niveau à bulle","la livella"],"Hobel":["plane","le rabot","la pialla"],"Feile":["file","la lime","la lima"],"Schleifpapier":["sandpaper","le papier de verre","la carta vetrata"],"Holz":["wood","le bois","il legno"],"Metall":["metal","le métal","il metallo"],"Leim":["glue","la colle","la colla"],"Farbe":["paint","la peinture","la vernice"],"Pinsel":["paintbrush","le pinceau","il pennello"],"Leiter":["ladder","l'échelle","la scala a pioli"],"Werkzeugkasten":["toolbox","la boîte à outils","la cassetta degli attrezzi"],"Werkbank":["workbench","l'établi","il banco da lavoro"],"Schutzhelm":["hard hat","le casque de chantier","il casco protettivo"],"Schutzbrille":["safety goggles","les lunettes de protection","gli occhiali protettivi"],"Arbeitshandschuhe":["work gloves","les gants de travail","i guanti da lavoro"],"Seil":["rope","la corde","la corda"],"Kabel":["cable","le câble","il cavo"],"Glühbirne":["light bulb","l'ampoule","la lampadina"],"Batterie":["battery","la pile","la pila"],"Magnet":["magnet","l'aimant","la calamita"],"Taschenlampe":["torch","la lampe de poche","la torcia"],"Sägemehl":["sawdust","la sciure","la segatura"],"Lötkolben":["soldering iron","le fer à souder","il saldatore"]},"strasse":{"Strasse":["street","la rue","la strada"],"Gehweg":["pavement","le trottoir","il marciapiede"],"Ampel":["traffic lights","le feu tricolore","il semaforo"],"Fussgängerstreifen":["zebra crossing","le passage piéton","le strisce pedonali"],"Auto":["car","la voiture","la macchina"],"Bus":["bus","le bus","l'autobus"],"Lastwagen":["lorry","le camion","il camion"],"Motorrad":["motorbike","la moto","la moto"],"Velo":["bicycle","le vélo","la bicicletta"],"Taxi":["taxi","le taxi","il taxi"],"Ambulanz":["ambulance","l'ambulance","l'ambulanza"],"Feuerwehrauto":["fire engine","le camion de pompiers","il camion dei pompieri"],"Polizeiauto":["police car","la voiture de police","l'auto della polizia"],"Verkehrsschild":["road sign","le panneau de signalisation","il cartello stradale"],"Stoppschild":["stop sign","le panneau stop","il segnale di stop"],"Kreuzung":["crossroads","le carrefour","l'incrocio"],"Kreisel":["roundabout","le rond-point","la rotonda"],"Brücke":["bridge","le pont","il ponte"],"Tunnel":["tunnel","le tunnel","la galleria"],"Bushaltestelle":["bus stop","l'arrêt de bus","la fermata dell'autobus"],"Gebäude":["building","le bâtiment","l'edificio"],"Laden":["shop","le magasin","il negozio"],"Strassenlaterne":["street lamp","le lampadaire","il lampione"],"Stau":["traffic jam","l'embouteillage","l'ingorgo"],"Autobahn":["motorway","l'autoroute","l'autostrada"],"Fussgänger":["pedestrian","le piéton","il pedone"],"Tram":["tram","le tram","il tram"],"Parkplatz":["car park","le parking","il parcheggio"],"Ecke":["corner","le coin","l'angolo"]},"park":{"Park":["park","le parc","il parco"],"Parkbank":["park bench","le banc","la panchina"],"Brunnen":["fountain","la fontaine","la fontana"],"Teich":["pond","l'étang","lo stagno"],"Rutschbahn":["slide","le toboggan","lo scivolo"],"Wippe":["seesaw","la bascule","l'altalena a bilico"],"Schaukel":["swing","la balançoire","l'altalena"],"Sandkasten":["sandpit","le bac à sable","la sabbiera"],"Weg":["path","le chemin","il sentiero"],"Gras":["grass","l'herbe","l'erba"],"Baum":["tree","l'arbre","l'albero"],"Eichhörnchen":["squirrel","l'écureuil","lo scoiattolo"],"Taube":["pigeon","le pigeon","il piccione"],"Schwan":["swan","le cygne","il cigno"],"Trottinett":["scooter","la trottinette","il monopattino"],"Rollschuhe":["roller skates","les patins à roulettes","i pattini a rotelle"],"Ball":["ball","le ballon","il pallone"],"Drachen":["kite","le cerf-volant","l'aquilone"],"Picknick":["picnic","le pique-nique","il picnic"],"Glace":["ice cream","la glace","il gelato"],"Jogger":["jogger","le joggeur","il corridore"],"Velofahrer":["cyclist","le cycliste","il ciclista"],"Spaziergang":["walk","la promenade","la passeggiata"],"Kinderwagen":["pram","la poussette","la carrozzina"],"Abfalleimer":["bin","la poubelle","il cestino"],"Plan":["map","le plan","la mappa"],"Sonne":["sun","le soleil","il sole"],"Schatten":["shade","l'ombre","l'ombra"],"Hund":["dog","le chien","il cane"]},"zoo":{"Zebra":["zebra","le zèbre","la zebra"],"Nashorn":["rhinoceros","le rhinocéros","il rinoceronte"],"Nilpferd":["hippopotamus","l'hippopotame","l'ippopotamo"],"Kamel":["camel","le chameau","il cammello"],"Känguru":["kangaroo","le kangourou","il canguro"],"Koala":["koala","le koala","il koala"],"Panda":["panda","le panda","il panda"],"Pinguin":["penguin","le pingouin","il pinguino"],"Flamingo":["flamingo","le flamant rose","il fenicottero"],"Pfau":["peacock","le paon","il pavone"],"Papagei":["parrot","le perroquet","il pappagallo"],"Eule":["owl","la chouette","il gufo"],"Adler":["eagle","l'aigle","l'aquila"],"Krokodil":["crocodile","le crocodile","il coccodrillo"],"Chamäleon":["chameleon","le caméléon","il camaleonte"],"Robbe":["seal","le phoque","la foca"],"Otter":["otter","la loutre","la lontra"],"Gorilla":["gorilla","le gorille","il gorilla"],"Leopard":["leopard","le léopard","il leopardo"],"Strauss":["ostrich","l'autruche","lo struzzo"],"Fledermaus":["bat","la chauve-souris","il pipistrello"],"Faultier":["sloth","le paresseux","il bradipo"],"Erdmännchen":["meerkat","le suricate","il suricato"],"Bison":["bison","le bison","il bisonte"],"Hirsch":["deer","le cerf","il cervo"],"Krake":["octopus","la pieuvre","il polpo"],"Käfig":["cage","la cage","la gabbia"],"Tierpfleger":["zookeeper","le soigneur","il guardiano dello zoo"]},"bahnhof":{"Bahnhof":["station","la gare","la stazione"],"Zug":["train","le train","il treno"],"Gleis":["track","la voie","il binario"],"Perron":["platform","le quai","la banchina"],"Billett":["ticket","le billet","il biglietto"],"Billettschalter":["ticket office","le guichet","la biglietteria"],"Fahrplan":["timetable","l'horaire","l'orario"],"Verspätung":["delay","le retard","il ritardo"],"Koffer":["suitcase","la valise","la valigia"],"Rucksack":["backpack","le sac à dos","lo zaino"],"Wagen":["carriage","le wagon","la carrozza"],"Lokomotive":["locomotive","la locomotive","la locomotiva"],"Kondukteur":["ticket inspector","le contrôleur","il controllore"],"Passagier":["passenger","le passager","il passeggero"],"Ausgang":["exit","la sortie","l'uscita"],"Rolltreppe":["escalator","l'escalator","la scala mobile"],"Lift":["lift","l'ascenseur","l'ascensore"],"Bahnhofsuhr":["station clock","l'horloge de la gare","l'orologio della stazione"],"Anzeigetafel":["departure board","le tableau des départs","il tabellone delle partenze"],"Umsteigen":["change of trains","la correspondance","il cambio di treno"],"Schnellzug":["express train","le train rapide","il treno rapido"],"U-Bahn":["underground","le métro","la metropolitana"],"Tram":["tram","le tram","il tram"],"Gepäckaufbewahrung":["left luggage","la consigne","il deposito bagagli"],"Kiosk":["kiosk","le kiosque","l'edicola"],"Bahnhofbuffet":["station café","le buffet de la gare","il bar della stazione"],"Toiletten":["toilets","les toilettes","i bagni"],"Durchsage":["announcement","l'annonce","l'annuncio"],"Netzplan":["network map","le plan du réseau","la mappa della rete"],"Abonnement":["season ticket","l'abonnement","l'abbonamento"]},"tankstelle":{"Tankstelle":["petrol station","la station-service","il distributore di benzina"],"Zapfsäule":["petrol pump","la pompe à essence","la pompa di benzina"],"Benzin":["petrol","l'essence","la benzina"],"Diesel":["diesel","le diesel","il gasolio"],"Schlauch":["hose","le tuyau","il tubo"],"Tank":["tank","le réservoir","il serbatoio"],"Auto":["car","la voiture","la macchina"],"Fahrer":["driver","le conducteur","il conducente"],"Shop":["shop","la boutique","il negozio"],"Öl":["oil","l'huile","l'olio"],"Reifen":["tyre","le pneu","lo pneumatico"],"Luft":["air","l'air","l'aria"],"Reifendruck":["tyre pressure","la pression des pneus","la pressione delle gomme"],"Autowaschanlage":["car wash","la station de lavage","l'autolavaggio"],"Staubsauger":["vacuum cleaner","l'aspirateur","l'aspirapolvere"],"Scheibenwischer":["windscreen wiper","l'essuie-glace","il tergicristallo"],"Windschutzscheibe":["windscreen","le pare-brise","il parabrezza"],"Rückspiegel":["rear-view mirror","le rétroviseur","lo specchietto retrovisore"],"Motor":["engine","le moteur","il motore"],"Motorhaube":["bonnet","le capot","il cofano"],"Kofferraum":["boot","le coffre","il bagagliaio"],"Autobatterie":["car battery","la batterie","la batteria"],"Scheinwerfer":["headlights","les phares","i fari"],"Sicherheitsgurt":["seat belt","la ceinture de sécurité","la cintura di sicurezza"],"Nummernschild":["number plate","la plaque d'immatriculation","la targa"],"Karte":["card","la carte","la carta"],"Quittung":["receipt","le reçu","la ricevuta"],"Kaffee":["coffee","le café","il caffè"],"Preis":["price","le prix","il prezzo"],"Mechaniker":["mechanic","le mécanicien","il meccanico"],"Panne":["breakdown","la panne","il guasto"]},"flughafen":{"Flughafen":["airport","l'aéroport","l'aeroporto"],"Flugzeug":["aeroplane","l'avion","l'aereo"],"Flug":["flight","le vol","il volo"],"Piste":["runway","la piste","la pista"],"Start":["take-off","le décollage","il decollo"],"Landung":["landing","l'atterrissage","l'atterraggio"],"Terminal":["terminal","le terminal","il terminal"],"Flugsteig":["gate","la porte d'embarquement","il gate"],"Bordkarte":["boarding pass","la carte d'embarquement","la carta d'imbarco"],"Reisepass":["passport","le passeport","il passaporto"],"Zoll":["customs","la douane","la dogana"],"Koffer":["suitcase","la valise","la valigia"],"Handgepäck":["hand luggage","le bagage à main","il bagaglio a mano"],"Gepäckband":["baggage carousel","le tapis à bagages","il nastro bagagli"],"Pilot":["pilot","le pilote","il pilota"],"Flugbegleiterin":["flight attendant","l'hôtesse de l'air","l'assistente di volo"],"Passagier":["passenger","le passager","il passeggero"],"Sitzplatz":["seat","le siège","il posto"],"Fensterplatz":["window seat","la place côté hublot","il posto finestrino"],"Gang":["aisle","l'allée","il corridoio"],"Flügel":["wings","les ailes","le ali"],"Verspätung":["delay","le retard","il ritardo"],"Helikopter":["helicopter","l'hélicoptère","l'elicottero"],"Kontrollturm":["control tower","la tour de contrôle","la torre di controllo"],"Sicherheitskontrolle":["security check","le contrôle de sécurité","il controllo di sicurezza"],"Wartehalle":["departure lounge","la salle d'attente","la sala d'attesa"],"Duty-free-Shop":["duty-free shop","la boutique hors taxes","il negozio duty free"],"Reiseziel":["destination","la destination","la destinazione"],"Wolken":["clouds","les nuages","le nuvole"],"Reise":["journey","le voyage","il viaggio"]},"landschaft":{"Berg":["mountain","la montagne","la montagna"],"Hügel":["hill","la colline","la collina"],"Tal":["valley","la vallée","la valle"],"Fluss":["river","la rivière","il fiume"],"See":["lake","le lac","il lago"],"Meer":["sea","la mer","il mare"],"Insel":["island","l'île","l'isola"],"Wald":["forest","la forêt","il bosco"],"Wüste":["desert","le désert","il deserto"],"Wasserfall":["waterfall","la cascade","la cascata"],"Vulkan":["volcano","le volcan","il vulcano"],"Höhle":["cave","la grotte","la grotta"],"Gletscher":["glacier","le glacier","il ghiacciaio"],"Schnee":["snow","la neige","la neve"],"Wiese":["meadow","le pré","il prato"],"Feld":["field","le champ","il campo"],"Fels":["rock","le rocher","la roccia"],"Stein":["stone","la pierre","la pietra"],"Sand":["sand","le sable","la sabbia"],"Himmel":["sky","le ciel","il cielo"],"Regenbogen":["rainbow","l'arc-en-ciel","l'arcobaleno"],"Nebel":["fog","le brouillard","la nebbia"],"Gewitter":["thunderstorm","l'orage","il temporale"],"Weg":["path","le chemin","il sentiero"],"Dorf":["village","le village","il villaggio"],"Stadt":["town","la ville","la città"],"Dschungel":["jungle","la jungle","la giungla"],"Sumpf":["swamp","le marais","la palude"],"Küste":["coast","la côte","la costa"],"Klippe":["cliff","la falaise","la scogliera"],"Horizont":["horizon","l'horizon","l'orizzonte"],"Gipfel":["summit","le sommet","la cima"],"Bach":["stream","le ruisseau","il ruscello"]},"bauernhof":{"Bauernhof":["farm","la ferme","la fattoria"],"Bauer":["farmer","le fermier","il contadino"],"Traktor":["tractor","le tracteur","il trattore"],"Stall":["stable","l'étable","la stalla"],"Scheune":["barn","la grange","il fienile"],"Stroh":["straw","la paille","la paglia"],"Heu":["hay","le foin","il fieno"],"Acker":["field","le champ","il campo"],"Weizen":["wheat","le blé","il grano"],"Mais":["maize","le maïs","il mais"],"Ernte":["harvest","la récolte","il raccolto"],"Ei":["egg","l'œuf","l'uovo"],"Milch":["milk","le lait","il latte"],"Käse":["cheese","le fromage","il formaggio"],"Butter":["butter","le beurre","il burro"],"Henne":["hen","la poule","la gallina"],"Hahn":["rooster","le coq","il gallo"],"Küken":["chick","le poussin","il pulcino"],"Stier":["bull","le taureau","il toro"],"Kalb":["calf","le veau","il vitello"],"Lamm":["lamb","l'agneau","l'agnello"],"Esel":["donkey","l'âne","l'asino"],"Truthahn":["turkey","la dinde","il tacchino"],"Hühnerhof":["poultry yard","la basse-cour","il pollaio"],"Zaun":["fence","la clôture","il recinto"],"Ziehbrunnen":["well","le puits","il pozzo"],"Vogelscheuche":["scarecrow","l'épouvantail","lo spaventapasseri"],"Heugabel":["pitchfork","la fourche","il forcone"],"Eimer":["bucket","le seau","il secchio"],"Mist":["manure","le fumier","il letame"],"Apfel":["apple","la pomme","la mela"],"Rüebli":["carrot","la carotte","la carota"],"Kartoffel":["potato","la pomme de terre","la patata"]},"strand":{"Strand":["beach","la plage","la spiaggia"],"Meer":["sea","la mer","il mare"],"Welle":["wave","la vague","l'onda"],"Sand":["sand","le sable","la sabbia"],"Muschel":["shell","le coquillage","la conchiglia"],"Krebs":["crab","le crabe","il granchio"],"Seestern":["starfish","l'étoile de mer","la stella marina"],"Sonnenschirm":["parasol","le parasol","l'ombrellone"],"Strandtuch":["beach towel","la serviette de plage","il telo da mare"],"Badehose":["swimming trunks","le maillot de bain","il costume da bagno"],"Bikini":["bikini","le bikini","il bikini"],"Sonnenbrille":["sunglasses","les lunettes de soleil","gli occhiali da sole"],"Sonnencreme":["sun cream","la crème solaire","la crema solare"],"Sonnenhut":["sun hat","le chapeau de soleil","il cappello da sole"],"Flipflops":["flip-flops","les tongs","le infradito"],"Eimer":["bucket","le seau","il secchiello"],"Schäufelchen":["spade","la pelle","la paletta"],"Sandburg":["sandcastle","le château de sable","il castello di sabbia"],"Schiff":["ship","le bateau","la nave"],"Segelboot":["sailing boat","le voilier","la barca a vela"],"Bademeister":["lifeguard","le maître-nageur","il bagnino"],"Schwimmring":["rubber ring","la bouée","il salvagente"],"Surfbrett":["surfboard","la planche de surf","la tavola da surf"],"Qualle":["jellyfish","la méduse","la medusa"],"Möwe":["seagull","la mouette","il gabbiano"],"Leuchtturm":["lighthouse","le phare","il faro"],"Gezeiten":["tides","la marée","la marea"],"Glace":["ice cream","la glace","il gelato"],"Hitze":["heat","la chaleur","il caldo"],"schwimmen":["to swim","nager","nuotare"],"tauchen":["to dive","plonger","immergersi"],"Flosse":["flipper","la palme","la pinna"],"Kühlbox":["cool box","la glacière","la borsa frigo"]},"schule":{"Schule":["school","l'école","la scuola"],"Lehrer":["teacher","le professeur","l'insegnante"],"Schüler":["pupil","l'élève","l'alunno"],"Klasse":["class","la classe","la classe"],"Wandtafel":["blackboard","le tableau noir","la lavagna"],"Kreide":["chalk","la craie","il gesso"],"Buch":["book","le livre","il libro"],"Heft":["exercise book","le cahier","il quaderno"],"Bleistift":["pencil","le crayon","la matita"],"Kugelschreiber":["ballpoint pen","le stylo","la penna"],"Radiergummi":["rubber","la gomme","la gomma"],"Lineal":["ruler","la règle","il righello"],"Schere":["scissors","les ciseaux","le forbici"],"Leim":["glue","la colle","la colla"],"Schulsack":["school bag","le cartable","la cartella"],"Etui":["pencil case","la trousse","l'astuccio"],"Schulbank":["school desk","le pupitre","il banco"],"Note":["mark","la note","il voto"],"Prüfung":["exam","l'examen","l'esame"],"Hausaufgaben":["homework","les devoirs","i compiti"],"Pause":["break","la récréation","la ricreazione"],"Pausenplatz":["playground","la cour de récréation","il cortile"],"Bibliothek":["library","la bibliothèque","la biblioteca"],"Computer":["computer","l'ordinateur","il computer"],"Landkarte":["map","la carte","la cartina"],"Globus":["globe","le globe","il mappamondo"],"Taschenrechner":["calculator","la calculatrice","la calcolatrice"],"Stundenplan":["timetable","l'emploi du temps","l'orario"],"Ferien":["holidays","les vacances","le vacanze"],"Schulglocke":["school bell","la sonnerie","la campanella"],"Schulleiter":["head teacher","le directeur","il preside"],"Wörterbuch":["dictionary","le dictionnaire","il dizionario"]},"spital":{"Spital":["hospital","l'hôpital","l'ospedale"],"Arzt":["doctor","le médecin","il medico"],"Krankenschwester":["nurse","l'infirmière","l'infermiera"],"Patient":["patient","le patient","il paziente"],"Spitalbett":["hospital bed","le lit d'hôpital","il letto d'ospedale"],"Ambulanz":["ambulance","l'ambulance","l'ambulanza"],"Notfall":["emergency","l'urgence","l'emergenza"],"Medikament":["medicine","le médicament","la medicina"],"Spritze":["injection","la piqûre","l'iniezione"],"Rezept":["prescription","l'ordonnance","la ricetta"],"Fieberthermometer":["thermometer","le thermomètre","il termometro"],"Fieber":["fever","la fièvre","la febbre"],"Schmerz":["pain","la douleur","il dolore"],"Wunde":["wound","la blessure","la ferita"],"Verband":["bandage","le bandage","la benda"],"Pflaster":["plaster","le pansement","il cerotto"],"Röntgenbild":["X-ray","la radiographie","la radiografia"],"Operation":["operation","l'opération","l'operazione"],"Operationssaal":["operating theatre","la salle d'opération","la sala operatoria"],"Rollstuhl":["wheelchair","le fauteuil roulant","la sedia a rotelle"],"Krücken":["crutches","les béquilles","le stampelle"],"Gips":["plaster cast","le plâtre","il gesso"],"Stethoskop":["stethoscope","le stéthoscope","lo stetoscopio"],"Maske":["face mask","le masque","la mascherina"],"Wartezimmer":["waiting room","la salle d'attente","la sala d'attesa"],"Termin":["appointment","le rendez-vous","l'appuntamento"],"Zahnarzt":["dentist","le dentiste","il dentista"],"Puls":["pulse","le pouls","il polso"],"Husten":["cough","la toux","la tosse"],"Erkältung":["cold","le rhume","il raffreddore"],"Impfung":["vaccination","le vaccin","il vaccino"],"Bahre":["stretcher","le brancard","la barella"]},"fest":{"Fest":["party","la fête","la festa"],"Geburtstag":["birthday","l'anniversaire","il compleanno"],"Torte":["cake","le gâteau","la torta"],"Kerze":["candle","la bougie","la candela"],"Geschenk":["present","le cadeau","il regalo"],"Ballon":["balloon","le ballon","il palloncino"],"Musik":["music","la musique","la musica"],"Tanz":["dance","la danse","il ballo"],"Lied":["song","la chanson","la canzone"],"Einladung":["invitation","l'invitation","l'invito"],"Gast":["guest","l'invité","l'ospite"],"Konfetti":["confetti","les confettis","i coriandoli"],"Feuerwerk":["fireworks","le feu d'artifice","i fuochi d'artificio"],"Weihnachten":["Christmas","Noël","il Natale"],"Weihnachtsmann":["Father Christmas","le père Noël","Babbo Natale"],"Neujahr":["New Year","le Nouvel An","il Capodanno"],"Hochzeit":["wedding","le mariage","il matrimonio"],"Braut":["bride","la mariée","la sposa"],"Bräutigam":["bridegroom","le marié","lo sposo"],"Ring":["ring","la bague","l'anello"],"Ostern":["Easter","Pâques","la Pasqua"],"Osterei":["Easter egg","l'œuf de Pâques","l'uovo di Pasqua"],"Verkleidung":["fancy dress","le déguisement","il travestimento"],"Maske":["mask","le masque","la maschera"],"Umzug":["parade","le défilé","la sfilata"],"Festessen":["feast","le festin","il banchetto"],"Anstossen":["toast","le toast","il brindisi"],"Champagner":["champagne","le champagne","lo champagne"],"Girlande":["garland","la guirlande","la ghirlanda"],"Jubiläum":["anniversary","le jubilé","l'anniversario"]},"essen":{"Brot":["bread","le pain","il pane"],"Käse":["cheese","le fromage","il formaggio"],"Butter":["butter","le beurre","il burro"],"Ei":["egg","l'œuf","l'uovo"],"Milch":["milk","le lait","il latte"],"Reis":["rice","le riz","il riso"],"Teigwaren":["pasta","les pâtes","la pasta"],"Suppe":["soup","la soupe","la zuppa"],"Salat":["salad","la salade","l'insalata"],"Fleisch":["meat","la viande","la carne"],"Fisch":["fish","le poisson","il pesce"],"Poulet":["chicken","le poulet","il pollo"],"Wurst":["sausage","la saucisse","la salsiccia"],"Schinken":["ham","le jambon","il prosciutto"],"Kartoffel":["potato","la pomme de terre","la patata"],"Pommes frites":["chips","les frites","le patatine fritte"],"Pizza":["pizza","la pizza","la pizza"],"Hamburger":["hamburger","le hamburger","l'hamburger"],"Sandwich":["sandwich","le sandwich","il panino"],"Apfel":["apple","la pomme","la mela"],"Orange":["orange","l'orange","l'arancia"],"Banane":["banana","la banane","la banana"],"Trauben":["grapes","le raisin","l'uva"],"Erdbeere":["strawberry","la fraise","la fragola"],"Zitrone":["lemon","le citron","il limone"],"Rüebli":["carrot","la carotte","la carota"],"Tomate":["tomato","la tomate","il pomodoro"],"Zwiebel":["onion","l'oignon","la cipolla"],"Kuchen":["cake","le gâteau","la torta"],"Schokolade":["chocolate","le chocolat","il cioccolato"],"Glace":["ice cream","la glace","il gelato"],"Wasser":["water","l'eau","l'acqua"],"Saft":["juice","le jus","il succo"],"Kaffee":["coffee","le café","il caffè"],"Tee":["tea","le thé","il tè"],"Bier":["beer","la bière","la birra"],"Wein":["wine","le vin","il vino"],"Salz":["salt","le sel","il sale"]},"einkauf":{"Laden":["shop","le magasin","il negozio"],"Supermarkt":["supermarket","le supermarché","il supermercato"],"Einkaufswagen":["shopping trolley","le chariot","il carrello"],"Einkaufskorb":["shopping basket","le panier","il cestino"],"Tragtasche":["carrier bag","le sac","la borsa"],"Kasse":["till","la caisse","la cassa"],"Kassierer":["cashier","le caissier","il cassiere"],"Geld":["money","l'argent","i soldi"],"Banknote":["banknote","le billet","la banconota"],"Münze":["coin","la pièce","la moneta"],"Kreditkarte":["credit card","la carte de crédit","la carta di credito"],"Preis":["price","le prix","il prezzo"],"Aktion":["special offer","la promotion","l'offerta"],"Kassenzettel":["receipt","le ticket de caisse","lo scontrino"],"Rückgeld":["change","la monnaie","il resto"],"Einkaufszettel":["shopping list","la liste de courses","la lista della spesa"],"Gestell":["shelf","le rayon","lo scaffale"],"Bäckerei":["bakery","la boulangerie","il panificio"],"Metzgerei":["butcher's","la boucherie","la macelleria"],"Apotheke":["chemist's","la pharmacie","la farmacia"],"Buchhandlung":["bookshop","la librairie","la libreria"],"Gemüseladen":["greengrocer's","le primeur","il fruttivendolo"],"Markt":["market","le marché","il mercato"],"Verkäufer":["shop assistant","le vendeur","il commesso"],"Kunde":["customer","le client","il cliente"],"billig":["cheap","bon marché","economico"],"teuer":["expensive","cher","caro"],"offen":["open","ouvert","aperto"],"geschlossen":["closed","fermé","chiuso"],"Waage":["scales","la balance","la bilancia"],"Plastiksack":["plastic bag","le sac en plastique","il sacchetto di plastica"]},"kleidung":{"T-Shirt":["T-shirt","le t-shirt","la maglietta"],"Hemd":["shirt","la chemise","la camicia"],"Hose":["trousers","le pantalon","i pantaloni"],"Rock":["skirt","la jupe","la gonna"],"Kleid":["dress","la robe","il vestito"],"Pullover":["jumper","le pull","il maglione"],"Jacke":["jacket","la veste","la giacca"],"Mantel":["coat","le manteau","il cappotto"],"Socken":["socks","les chaussettes","i calzini"],"Schuhe":["shoes","les chaussures","le scarpe"],"Turnschuhe":["trainers","les baskets","le scarpe da ginnastica"],"Stiefel":["boots","les bottes","gli stivali"],"Handschuhe":["gloves","les gants","i guanti"],"Schal":["scarf","l'écharpe","la sciarpa"],"Mütze":["woolly hat","le bonnet","il berretto"],"Hut":["hat","le chapeau","il cappello"],"Gürtel":["belt","la ceinture","la cintura"],"Krawatte":["tie","la cravate","la cravatta"],"Brille":["glasses","les lunettes","gli occhiali"],"Handtasche":["handbag","le sac à main","la borsetta"],"Badehose":["swimming trunks","le maillot de bain","il costume da bagno"],"Unterwäsche":["underwear","les sous-vêtements","la biancheria intima"],"Regenjacke":["raincoat","l'imperméable","l'impermeabile"],"Anzug":["suit","le costume","l'abito"],"Jeans":["jeans","le jean","i jeans"],"Weste":["waistcoat","le gilet","il gilet"],"Taschentuch":["handkerchief","le mouchoir","il fazzoletto"],"Knopf":["button","le bouton","il bottone"],"Reissverschluss":["zip","la fermeture éclair","la cerniera"],"Hosentasche":["pocket","la poche","la tasca"],"Ärmel":["sleeve","la manche","la manica"],"Kragen":["collar","le col","il colletto"],"Grösse":["size","la taille","la taglia"],"Sandale":["sandal","la sandale","il sandalo"],"Armbanduhr":["watch","la montre","l'orologio"],"Halskette":["necklace","le collier","la collana"]},"berufe":{"Arzt":["doctor","le médecin","il medico"],"Krankenschwester":["nurse","l'infirmière","l'infermiera"],"Lehrer":["teacher","le professeur","l'insegnante"],"Polizist":["police officer","le policier","il poliziotto"],"Feuerwehrmann":["firefighter","le pompier","il pompiere"],"Koch":["cook","le cuisinier","il cuoco"],"Bäcker":["baker","le boulanger","il fornaio"],"Metzger":["butcher","le boucher","il macellaio"],"Kellner":["waiter","le serveur","il cameriere"],"Briefträger":["postman","le facteur","il postino"],"Chauffeur":["driver","le chauffeur","l'autista"],"Pilot":["pilot","le pilote","il pilota"],"Bauer":["farmer","l'agriculteur","l'agricoltore"],"Maurer":["bricklayer","le maçon","il muratore"],"Schreiner":["carpenter","le menuisier","il falegname"],"Elektriker":["electrician","l'électricien","l'elettricista"],"Sanitärinstallateur":["plumber","le plombier","l'idraulico"],"Mechaniker":["mechanic","le mécanicien","il meccanico"],"Maler":["painter","le peintre","il pittore"],"Coiffeur":["hairdresser","le coiffeur","il parrucchiere"],"Zahnarzt":["dentist","le dentiste","il dentista"],"Anwalt":["lawyer","l'avocat","l'avvocato"],"Richter":["judge","le juge","il giudice"],"Wissenschaftler":["scientist","le scientifique","lo scienziato"],"Ingenieur":["engineer","l'ingénieur","l'ingegnere"],"Programmierer":["programmer","le programmeur","il programmatore"],"Musiker":["musician","le musicien","il musicista"],"Schauspieler":["actor","l'acteur","l'attore"],"Sänger":["singer","le chanteur","il cantante"],"Journalist":["journalist","le journaliste","il giornalista"],"Fotograf":["photographer","le photographe","il fotografo"],"Tierarzt":["vet","le vétérinaire","il veterinario"],"Soldat":["soldier","le soldat","il soldato"],"Astronaut":["astronaut","l'astronaute","l'astronauta"],"Fischer":["fisherman","le pêcheur","il pescatore"],"Verkäufer":["shop assistant","le vendeur","il commesso"]},"familie":{"Mutter":["mother","la mère","la madre"],"Vater":["father","le père","il padre"],"Eltern":["parents","les parents","i genitori"],"Sohn":["son","le fils","il figlio"],"Tochter":["daughter","la fille","la figlia"],"Bruder":["brother","le frère","il fratello"],"Schwester":["sister","la sœur","la sorella"],"Grossvater":["grandfather","le grand-père","il nonno"],"Grossmutter":["grandmother","la grand-mère","la nonna"],"Enkel":["grandson","le petit-fils","il nipote (dei nonni)"],"Onkel":["uncle","l'oncle","lo zio"],"Tante":["aunt","la tante","la zia"],"Cousin":["cousin","le cousin","il cugino"],"Neffe":["nephew","le neveu","il nipote (degli zii)"],"Nichte":["niece","la nièce","la nipote"],"Ehemann":["husband","le mari","il marito"],"Ehefrau":["wife","la femme","la moglie"],"Baby":["baby","le bébé","il neonato"],"Kind":["child","l'enfant","il bambino"],"Familie":["family","la famille","la famiglia"],"Schwiegervater":["father-in-law","le beau-père","il suocero"],"Schwiegermutter":["mother-in-law","la belle-mère","la suocera"],"Schwager":["brother-in-law","le beau-frère","il cognato"],"Götti":["godfather","le parrain","il padrino"],"Gotte":["godmother","la marraine","la madrina"],"Zwilling":["twin","le jumeau","il gemello"],"Freund":["friend","l'ami","l'amico"],"Nachbar":["neighbour","le voisin","il vicino"],"Paar":["couple","le couple","la coppia"],"Person":["person","la personne","la persona"]},"erledigen":{"essen":["to eat","manger","mangiare"],"trinken":["to drink","boire","bere"],"schlafen":["to sleep","dormir","dormire"],"aufstehen":["to get up","se lever","alzarsi"],"sich waschen":["to wash","se laver","lavarsi"],"duschen":["to have a shower","se doucher","fare la doccia"],"sich anziehen":["to get dressed","s'habiller","vestirsi"],"kochen":["to cook","cuisiner","cucinare"],"putzen":["to clean","nettoyer","pulire"],"arbeiten":["to work","travailler","lavorare"],"lernen":["to study","étudier","studiare"],"lesen":["to read","lire","leggere"],"schreiben":["to write","écrire","scrivere"],"sprechen":["to speak","parler","parlare"],"zuhören":["to listen","écouter","ascoltare"],"schauen":["to look","regarder","guardare"],"gehen":["to walk","marcher","camminare"],"rennen":["to run","courir","correre"],"fahren":["to drive","conduire","guidare"],"kaufen":["to buy","acheter","comprare"],"bezahlen":["to pay","payer","pagare"],"öffnen":["to open","ouvrir","aprire"],"schliessen":["to close","fermer","chiudere"],"anrufen":["to call","appeler","telefonare"],"warten":["to wait","attendre","aspettare"],"denken":["to think","penser","pensare"],"helfen":["to help","aider","aiutare"],"spielen":["to play","jouer","giocare"],"singen":["to sing","chanter","cantare"],"tanzen":["to dance","danser","ballare"],"lachen":["to laugh","rire","ridere"],"weinen":["to cry","pleurer","piangere"],"ankommen":["to arrive","arriver","arrivare"],"Wäsche waschen":["to do the laundry","faire la lessive","fare il bucato"],"bügeln":["to iron","repasser","stirare"],"Abfall wegbringen":["to take out the rubbish","sortir la poubelle","portare fuori la spazzatura"],"aufräumen":["to tidy up","ranger","riordinare"],"tragen":["to carry","porter","portare"]},"gegenteil":{"voll ↔ leer":["full ↔ empty","plein ↔ vide","pieno ↔ vuoto"],"gross ↔ klein":["big ↔ small","grand ↔ petit","grande ↔ piccolo"],"hoch ↔ tief":["high ↔ low","haut ↔ bas","alto ↔ basso"],"heiss ↔ kalt":["hot ↔ cold","chaud ↔ froid","caldo ↔ freddo"],"Tag ↔ Nacht":["day ↔ night","le jour ↔ la nuit","il giorno ↔ la notte"],"offen ↔ geschlossen":["open ↔ closed","ouvert ↔ fermé","aperto ↔ chiuso"],"schnell ↔ langsam":["fast ↔ slow","rapide ↔ lent","veloce ↔ lento"],"schwer ↔ leicht":["heavy ↔ light","lourd ↔ léger","pesante ↔ leggero"],"alt ↔ jung":["old ↔ young","vieux ↔ jeune","vecchio ↔ giovane"],"gut ↔ schlecht":["good ↔ bad","bon ↔ mauvais","buono ↔ cattivo"],"sauber ↔ schmutzig":["clean ↔ dirty","propre ↔ sale","pulito ↔ sporco"],"glücklich ↔ traurig":["happy ↔ sad","heureux ↔ triste","felice ↔ triste"],"stark ↔ schwach":["strong ↔ weak","fort ↔ faible","forte ↔ debole"],"hart ↔ weich":["hard ↔ soft","dur ↔ mou","duro ↔ morbido"],"trocken ↔ nass":["dry ↔ wet","sec ↔ mouillé","asciutto ↔ bagnato"],"oben ↔ unten":["up ↔ down","en haut ↔ en bas","sopra ↔ sotto"],"drinnen ↔ draussen":["inside ↔ outside","dedans ↔ dehors","dentro ↔ fuori"],"nah ↔ weit":["near ↔ far","près ↔ loin","vicino ↔ lontano"],"lang ↔ kurz":["long ↔ short","long ↔ court","lungo ↔ corto"],"breit ↔ schmal":["wide ↔ narrow","large ↔ étroit","largo ↔ stretto"],"teuer ↔ billig":["expensive ↔ cheap","cher ↔ bon marché","caro ↔ economico"],"leicht ↔ schwierig":["easy ↔ difficult","facile ↔ difficile","facile ↔ difficile"],"hell ↔ dunkel":["light ↔ dark","clair ↔ sombre","chiaro ↔ scuro"],"laut ↔ leise":["loud ↔ quiet","bruyant ↔ silencieux","rumoroso ↔ silenzioso"],"vorher ↔ nachher":["before ↔ after","avant ↔ après","prima ↔ dopo"],"anfangen ↔ aufhören":["to start ↔ to stop","commencer ↔ finir","cominciare ↔ finire"],"ja ↔ nein":["yes ↔ no","oui ↔ non","sì ↔ no"],"gewinnen ↔ verlieren":["to win ↔ to lose","gagner ↔ perdre","vincere ↔ perdere"],"hinaufgehen ↔ hinuntergehen":["to go up ↔ to go down","monter ↔ descendre","salire ↔ scendere"],"einschalten ↔ ausschalten":["to switch on ↔ to switch off","allumer ↔ éteindre","accendere ↔ spegnere"],"früh ↔ spät":["early ↔ late","tôt ↔ tard","presto ↔ tardi"],"viel ↔ wenig":["a lot ↔ a little","beaucoup ↔ peu","molto ↔ poco"]},"jahreszeiten":{"Frühling":["spring","le printemps","la primavera"],"Sommer":["summer","l'été","l'estate"],"Herbst":["autumn","l'automne","l'autunno"],"Winter":["winter","l'hiver","l'inverno"],"Jahreszeit":["season","la saison","la stagione"],"Jahr":["year","l'année","l'anno"],"Monat":["month","le mois","il mese"],"Woche":["week","la semaine","la settimana"],"Tag":["day","le jour","il giorno"],"Hitze":["heat","la chaleur","il caldo"],"Kälte":["cold","le froid","il freddo"],"Regen":["rain","la pluie","la pioggia"],"Schnee":["snow","la neige","la neve"],"Wind":["wind","le vent","il vento"],"Wolke":["cloud","le nuage","la nuvola"],"Sonne":["sun","le soleil","il sole"],"Gewitter":["thunderstorm","l'orage","il temporale"],"Nebel":["fog","le brouillard","la nebbia"],"Eis":["ice","la glace","il ghiaccio"],"Schneemann":["snowman","le bonhomme de neige","il pupazzo di neve"],"Herbstlaub":["autumn leaves","les feuilles mortes","le foglie secche"],"Ernte":["harvest","la récolte","il raccolto"],"Regenschirm":["umbrella","le parapluie","l'ombrello"],"Regenbogen":["rainbow","l'arc-en-ciel","l'arcobaleno"],"Blitz":["lightning","l'éclair","il fulmine"],"Donner":["thunder","le tonnerre","il tuono"],"Temperatur":["temperature","la température","la temperatura"],"Blüten":["blossoms","les fleurs","i fiori"]},"sport":{"Fussball":["football","le football","il calcio"],"Basketball":["basketball","le basket","la pallacanestro"],"Tennis":["tennis","le tennis","il tennis"],"Schwimmen":["swimming","la natation","il nuoto"],"Velofahren":["cycling","le cyclisme","il ciclismo"],"Skifahren":["skiing","le ski","lo sci"],"Snowboarden":["snowboarding","le snowboard","lo snowboard"],"Eislaufen":["ice skating","le patinage","il pattinaggio"],"Eishockey":["ice hockey","le hockey sur glace","l'hockey su ghiaccio"],"Handball":["handball","le handball","la pallamano"],"Volleyball":["volleyball","le volley-ball","la pallavolo"],"Golf":["golf","le golf","il golf"],"Boxen":["boxing","la boxe","il pugilato"],"Judo":["judo","le judo","il judo"],"Leichtathletik":["athletics","l'athlétisme","l'atletica"],"Turnen":["gymnastics","la gymnastique","la ginnastica"],"Yoga":["yoga","le yoga","lo yoga"],"Rudern":["rowing","l'aviron","il canottaggio"],"Segeln":["sailing","la voile","la vela"],"Surfen":["surfing","le surf","il surf"],"Klettern":["climbing","l'escalade","l'arrampicata"],"Wandern":["hiking","la randonnée","l'escursionismo"],"Mannschaft":["team","l'équipe","la squadra"],"Tennisschläger":["tennis racket","la raquette","la racchetta"],"Tor":["goal","le but","il gol"],"Schiedsrichter":["referee","l'arbitre","l'arbitro"],"Medaille":["medal","la médaille","la medaglia"],"Pokal":["trophy","le trophée","la coppa"],"Stadion":["stadium","le stade","lo stadio"],"Trainer":["coach","l'entraîneur","l'allenatore"],"Rennen":["race","la course","la gara"],"Bogenschiessen":["archery","le tir à l'arc","il tiro con l'arco"],"Tischtennis":["table tennis","le tennis de table","il ping-pong"],"Badminton":["badminton","le badminton","il badminton"]},"haustiere":{"Hund":["dog","le chien","il cane"],"Katze":["cat","le chat","il gatto"],"Welpe":["puppy","le chiot","il cucciolo"],"Kätzchen":["kitten","le chaton","il gattino"],"Kaninchen":["rabbit","le lapin","il coniglio"],"Hamster":["hamster","le hamster","il criceto"],"Meerschweinchen":["guinea pig","le cochon d'Inde","il porcellino d'India"],"Wellensittich":["budgie","la perruche","il pappagallino"],"Kanarienvogel":["canary","le canari","il canarino"],"Goldfisch":["goldfish","le poisson rouge","il pesce rosso"],"Aquarium":["aquarium","l'aquarium","l'acquario"],"Schildkröte":["tortoise","la tortue","la tartaruga"],"Pferd":["horse","le cheval","il cavallo"],"Käfig":["cage","la cage","la gabbia"],"Leine":["lead","la laisse","il guinzaglio"],"Halsband":["collar","le collier","il collare"],"Knochen":["bone","l'os","l'osso"],"Ball":["ball","la balle","la palla"],"Hundefutter":["dog food","la nourriture pour chiens","il cibo per cani"],"Futternapf":["food bowl","la gamelle","la ciotola"],"Körbchen":["dog basket","le panier","la cuccia"],"Katzenklo":["litter tray","la litière","la lettiera"],"Kratzbaum":["scratching post","l'arbre à chat","il tiragraffi"],"Tierarzt":["vet","le vétérinaire","il veterinario"],"Pfote":["paw","la patte","la zampa"],"Schwanz":["tail","la queue","la coda"],"Fell":["fur","le pelage","il pelo"],"bellen":["to bark","aboyer","abbaiare"],"miauen":["to meow","miauler","miagolare"],"spazieren gehen":["to go for a walk","se promener","passeggiare"],"Frettchen":["ferret","le furet","il furetto"],"Ratte":["rat","le rat","il ratto"]},"farben":{"rot":["red","rouge","rosso"],"blau":["blue","bleu","blu"],"grün":["green","vert","verde"],"gelb":["yellow","jaune","giallo"],"orange":["orange","orange","arancione"],"violett":["purple","violet","viola"],"rosa":["pink","rose","rosa"],"braun":["brown","marron","marrone"],"schwarz":["black","noir","nero"],"weiss":["white","blanc","bianco"],"grau":["grey","gris","grigio"],"türkis":["turquoise","turquoise","turchese"],"beige":["beige","beige","beige"],"golden":["golden","doré","dorato"],"silbern":["silver","argenté","argentato"],"hellblau":["light blue","bleu clair","azzurro"],"dunkelblau":["dark blue","bleu foncé","blu scuro"],"hellgrün":["light green","vert clair","verde chiaro"],"dunkelgrün":["dark green","vert foncé","verde scuro"],"lila":["lilac","lilas","lilla"],"weinrot":["burgundy","bordeaux","bordeaux"],"hell":["light","clair","chiaro"],"dunkel":["dark","foncé","scuro"],"Farbe":["colour","la couleur","il colore"],"Regenbogen":["rainbow","l'arc-en-ciel","l'arcobaleno"],"bunt":["colourful","coloré","colorato"]},"formen":{"Kreis":["circle","le cercle","il cerchio"],"Quadrat":["square","le carré","il quadrato"],"Dreieck":["triangle","le triangle","il triangolo"],"Rechteck":["rectangle","le rectangle","il rettangolo"],"Oval":["oval","l'ovale","l'ovale"],"Stern":["star","l'étoile","la stella"],"Herz":["heart","le cœur","il cuore"],"Raute":["diamond","le losange","il rombo"],"Fünfeck":["pentagon","le pentagone","il pentagono"],"Sechseck":["hexagon","l'hexagone","l'esagono"],"Achteck":["octagon","l'octogone","l'ottagono"],"Trapez":["trapezium","le trapèze","il trapezio"],"Kreuz":["cross","la croix","la croce"],"Pfeil":["arrow","la flèche","la freccia"],"Halbkreis":["semicircle","le demi-cercle","il semicerchio"],"Mondsichel":["crescent","le croissant","la mezzaluna"],"Ring":["ring","l'anneau","l'anello"],"Spirale":["spiral","la spirale","la spirale"],"Zickzack":["zigzag","le zigzag","lo zigzag"],"Linie":["line","la ligne","la linea"],"Punkt":["dot","le point","il punto"],"Würfel":["cube","le cube","il cubo"],"Kugel":["sphere","la sphère","la sfera"],"Zylinder":["cylinder","le cylindre","il cilindro"],"Kegel":["cone","le cône","il cono"],"Pyramide":["pyramid","la pyramide","la piramide"]},"vergnuegungspark":{"Achterbahn":["roller coaster","les montagnes russes","le montagne russe"],"Riesenrad":["big wheel","la grande roue","la ruota panoramica"],"Karussell":["merry-go-round","le manège","la giostra"],"Autoscooter":["bumper cars","les autos tamponneuses","l'autoscontro"],"Geisterbahn":["ghost train","le train fantôme","il tunnel dell'orrore"],"Zuckerwatte":["candyfloss","la barbe à papa","lo zucchero filato"],"Popcorn":["popcorn","le pop-corn","i popcorn"],"Ballon":["balloon","le ballon","il palloncino"],"Eintrittskarte":["ticket","le billet d'entrée","il biglietto d'ingresso"],"Warteschlange":["queue","la file d'attente","la fila"],"Vergnügungspark":["amusement park","le parc d'attractions","il parco divertimenti"],"Attraktion":["attraction","l'attraction","l'attrazione"],"Wasserrutsche":["water slide","le toboggan aquatique","lo scivolo d'acqua"],"Schiessbude":["shooting gallery","le stand de tir","il tiro a segno"],"Plüschtier":["soft toy","la peluche","il peluche"],"Preis":["prize","le prix","il premio"],"Jahrmarkt":["fair","la foire","la fiera"],"Freifallturm":["drop tower","la tour de chute libre","la torre di caduta libera"],"Angst":["fear","la peur","la paura"],"Lachen":["laughter","le rire","la risata"],"Sicherheitsbügel":["safety bar","l'arceau de sécurité","la barra di sicurezza"],"Glace":["ice cream","la glace","il gelato"],"Höhe":["height","la hauteur","l'altezza"],"Geschwindigkeit":["speed","la vitesse","la velocità"],"Spiegelkabinett":["hall of mirrors","le palais des glaces","la galleria degli specchi"],"Tageskarte":["day pass","le pass journée","il biglietto giornaliero"],"Maskottchen":["mascot","la mascotte","la mascotte"],"Show":["show","le spectacle","lo spettacolo"],"Lichter":["lights","les lumières","le luci"],"Hüpfburg":["bouncy castle","le château gonflable","il castello gonfiabile"],"Labyrinth":["maze","le labyrinthe","il labirinto"]},"zirkus":{"Zirkus":["circus","le cirque","il circo"],"Zirkuszelt":["big top","le chapiteau","il tendone"],"Clown":["clown","le clown","il pagliaccio"],"Zauberer":["magician","le magicien","il mago"],"Zauberei":["magic","la magie","la magia"],"Trick":["trick","le tour","il trucco"],"Zylinderhut":["top hat","le haut-de-forme","il cilindro"],"Jongleur":["juggler","le jongleur","il giocoliere"],"Akrobat":["acrobat","l'acrobate","l'acrobata"],"Seiltänzer":["tightrope walker","le funambule","il funambolo"],"Drahtseil":["tightrope","la corde raide","la fune"],"Trapez":["trapeze","le trapèze","il trapezio"],"Dompteur":["animal tamer","le dompteur","il domatore"],"Peitsche":["whip","le fouet","la frusta"],"Reifen":["hoop","le cerceau","il cerchio"],"Kugel":["ball","la boule","la palla"],"Einrad":["unicycle","le monocycle","il monociclo"],"Manege":["circus ring","la piste","la pista"],"Publikum":["audience","le public","il pubblico"],"Applaus":["applause","les applaudissements","l'applauso"],"Trompete":["trumpet","la trompette","la tromba"],"Trommel":["drum","le tambour","il tamburo"],"Zirkusdirektor":["ringmaster","le directeur du cirque","il direttore del circo"],"Kanone":["cannon","le canon","il cannone"],"rote Nase":["red nose","le nez rouge","il naso rosso"],"Feuer":["fire","le feu","il fuoco"],"Feuerschlucker":["fire-eater","le cracheur de feu","il mangiafuoco"],"Vorstellung":["performance","la représentation","lo spettacolo"],"Scheinwerfer":["spotlights","les projecteurs","i riflettori"],"Kostüm":["costume","le costume","il costume"],"Kraft":["strength","la force","la forza"],"Kraftmensch":["strongman","l'homme fort","l'uomo forzuto"]},"koerper2":{"Daumen":["thumb","le pouce","il pollice"],"Zeigefinger":["index finger","l'index","l'indice"],"Mittelfinger":["middle finger","le majeur","il medio"],"Ringfinger":["ring finger","l'annulaire","l'anulare"],"kleiner Finger":["little finger","l'auriculaire","il mignolo"],"Handfläche":["palm","la paume","il palmo"],"Handgelenk":["wrist","le poignet","il polso"],"Faust":["fist","le poing","il pugno"],"Augenbraue":["eyebrow","le sourcil","il sopracciglio"],"Wimper":["eyelash","le cil","il ciglio"],"Augenlid":["eyelid","la paupière","la palpebra"],"Pupille":["pupil","la pupille","la pupilla"],"Wange":["cheek","la joue","la guancia"],"Kinn":["chin","le menton","il mento"],"Lippe":["lip","la lèvre","il labbro"],"Nasenloch":["nostril","la narine","la narice"],"Ohrläppchen":["earlobe","le lobe de l'oreille","il lobo dell'orecchio"],"Schläfe":["temple","la tempe","la tempia"],"Kiefer":["jaw","la mâchoire","la mascella"],"Brust":["chest","la poitrine","il petto"],"Bauchnabel":["belly button","le nombril","l'ombelico"],"Taille":["waist","la taille","la vita"],"Hüfte":["hip","la hanche","il fianco"],"Achselhöhle":["armpit","l'aisselle","l'ascella"],"Oberschenkel":["thigh","la cuisse","la coscia"],"Nacken":["nape of the neck","la nuque","la nuca"],"Wirbelsäule":["spine","la colonne vertébrale","la colonna vertebrale"],"Gesäss":["buttocks","les fesses","i glutei"],"Wade":["calf","le mollet","il polpaccio"],"Fussknöchel":["ankle","la cheville","la caviglia"],"Ferse":["heel","le talon","il tallone"],"Fusssohle":["sole of the foot","la plante du pied","la pianta del piede"],"Muskel":["muscle","le muscle","il muscolo"]},"zahlen":{"null":["zero","zéro","zero"],"eins":["one","un","uno"],"zwei":["two","deux","due"],"drei":["three","trois","tre"],"vier":["four","quatre","quattro"],"fünf":["five","cinq","cinque"],"sechs":["six","six","sei"],"sieben":["seven","sept","sette"],"acht":["eight","huit","otto"],"neun":["nine","neuf","nove"],"zehn":["ten","dix","dieci"],"elf":["eleven","onze","undici"],"zwölf":["twelve","douze","dodici"],"dreizehn":["thirteen","treize","tredici"],"vierzehn":["fourteen","quatorze","quattordici"],"fünfzehn":["fifteen","quinze","quindici"],"sechzehn":["sixteen","seize","sedici"],"siebzehn":["seventeen","dix-sept","diciassette"],"achtzehn":["eighteen","dix-huit","diciotto"],"neunzehn":["nineteen","dix-neuf","diciannove"],"zwanzig":["twenty","vingt","venti"],"einundzwanzig":["twenty-one","vingt et un","ventuno"],"dreissig":["thirty","trente","trenta"],"vierzig":["forty","quarante","quaranta"],"fünfzig":["fifty","cinquante","cinquanta"],"sechzig":["sixty","soixante","sessanta"],"siebzig":["seventy","soixante-dix","settanta"],"achtzig":["eighty","quatre-vingts","ottanta"],"neunzig":["ninety","quatre-vingt-dix","novanta"],"hundert":["one hundred","cent","cento"],"fünfhundert":["five hundred","cinq cents","cinquecento"],"tausend":["one thousand","mille","mille"],"eine Million":["one million","un million","un milione"]},"wochentage":{"Montag":["Monday","lundi","lunedì"],"Dienstag":["Tuesday","mardi","martedì"],"Mittwoch":["Wednesday","mercredi","mercoledì"],"Donnerstag":["Thursday","jeudi","giovedì"],"Freitag":["Friday","vendredi","venerdì"],"Samstag":["Saturday","samedi","sabato"],"Sonntag":["Sunday","dimanche","domenica"],"Woche":["week","la semaine","la settimana"],"Wochenende":["weekend","le week-end","il fine settimana"],"Werktag":["working day","le jour ouvrable","il giorno feriale"],"heute":["today","aujourd'hui","oggi"],"morgen":["tomorrow","demain","domani"],"gestern":["yesterday","hier","ieri"],"übermorgen":["the day after tomorrow","après-demain","dopodomani"],"vorgestern":["the day before yesterday","avant-hier","l'altro ieri"],"Tag":["day","le jour","il giorno"],"Vormittag":["morning","le matin","la mattina"],"Mittag":["midday","midi","il mezzogiorno"],"Nachmittag":["afternoon","l'après-midi","il pomeriggio"],"Nacht":["night","la nuit","la notte"],"Mitternacht":["midnight","minuit","la mezzanotte"],"Stunde":["hour","l'heure","l'ora"],"Minute":["minute","la minute","il minuto"]},"monate":{"Januar":["January","janvier","gennaio"],"Februar":["February","février","febbraio"],"März":["March","mars","marzo"],"April":["April","avril","aprile"],"Mai":["May","mai","maggio"],"Juni":["June","juin","giugno"],"Juli":["July","juillet","luglio"],"August":["August","août","agosto"],"September":["September","septembre","settembre"],"Oktober":["October","octobre","ottobre"],"November":["November","novembre","novembre"],"Dezember":["December","décembre","dicembre"],"Monat":["month","le mois","il mese"],"Jahr":["year","l'année","l'anno"],"Kalender":["calendar","le calendrier","il calendario"],"Datum":["date","la date","la data"]}};
+Object.entries(TOPICS).forEach(([k, t]) => t.words.forEach(w => { const r = TR[k][w.de]; w.en = r[0]; w.fr = r[1]; w.it = r[2]; }));
+
+// ---------- Sprachen ----------
+const LANGS = {
+  es: {name:"Spanisch",    native:"Español",  flag:"🇪🇸", voice:"es-ES"},
+  en: {name:"Englisch",    native:"English",  flag:"🇬🇧", voice:"en-GB"},
+  fr: {name:"Französisch", native:"Français", flag:"🇫🇷", voice:"fr-FR"},
+  it: {name:"Italienisch", native:"Italiano", flag:"🇮🇹", voice:"it-IT"}
+};
+
+// Eigene Bilder (SVG) für Wörter, bei denen ein Emoji nicht genügt
+const SK="#f2c9a0", SKD="#dba777", HAIR="#5a3a22", SHIRT="#4a78c8", PANTS="#3d4a6b", RED="#e02b2b";
+const ring = (cx,cy,r) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${RED}" stroke-width="3.5"/>`;
+const svg = (vb, inner) => `<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+
+function figureFront(marker){
+  return svg("0 0 120 200", `
+    <rect x="18" y="62" width="14" height="66" rx="7" fill="${SK}"/><rect x="88" y="62" width="14" height="66" rx="7" fill="${SK}"/>
+    <circle cx="25" cy="132" r="8" fill="${SK}"/><circle cx="95" cy="132" r="8" fill="${SK}"/>
+    <rect x="40" y="120" width="18" height="72" rx="8" fill="${PANTS}"/><rect x="62" y="120" width="18" height="72" rx="8" fill="${PANTS}"/>
+    <rect x="37" y="188" width="24" height="9" rx="4" fill="#333"/><rect x="59" y="188" width="24" height="9" rx="4" fill="#333"/>
+    <rect x="52" y="42" width="16" height="22" rx="4" fill="${SK}"/>
+    <rect x="32" y="58" width="56" height="70" rx="16" fill="${SHIRT}"/>
+    <circle cx="60" cy="28" r="18" fill="${SK}"/>
+    <path d="M42 26 C42 6 78 6 78 26 C72 15 48 15 42 26Z" fill="${HAIR}"/>
+    <circle cx="53" cy="30" r="2" fill="#333"/><circle cx="67" cy="30" r="2" fill="#333"/>
+    <path d="M54 37 Q60 42 66 37" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round"/>
+    ${marker}`);
+}
+function figureBack(marker=""){
+  return svg("0 0 120 200", `
+    <rect x="18" y="62" width="14" height="66" rx="7" fill="${SK}"/><rect x="88" y="62" width="14" height="66" rx="7" fill="${SK}"/>
+    <circle cx="25" cy="132" r="8" fill="${SK}"/><circle cx="95" cy="132" r="8" fill="${SK}"/>
+    <rect x="40" y="120" width="18" height="72" rx="8" fill="${SK}"/><rect x="62" y="120" width="18" height="72" rx="8" fill="${SK}"/>
+    <rect x="37" y="188" width="24" height="9" rx="4" fill="#333"/><rect x="59" y="188" width="24" height="9" rx="4" fill="#333"/>
+    <rect x="52" y="42" width="16" height="22" rx="4" fill="${SK}"/>
+    <rect x="32" y="58" width="56" height="70" rx="16" fill="${SK}"/>
+    <path d="M60 62 L60 124" stroke="${SKD}" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M42 72 Q52 68 56 84 Q46 90 42 72Z" fill="none" stroke="${SKD}" stroke-width="2"/>
+    <path d="M78 72 Q68 68 64 84 Q74 90 78 72Z" fill="none" stroke="${SKD}" stroke-width="2"/>
+    <rect x="37" y="116" width="46" height="28" rx="8" fill="${PANTS}"/>
+    <circle cx="41" cy="30" r="3.5" fill="${SK}"/><circle cx="79" cy="30" r="3.5" fill="${SK}"/>
+    <circle cx="60" cy="28" r="18" fill="${HAIR}"/>${marker}`);
+}
+function foot(){
+  return svg("0 0 120 165", `
+    <path d="M36 44 C28 72 30 112 42 140 C50 156 74 156 82 138 C94 112 98 72 92 56 C80 46 52 42 36 44Z" fill="${SK}"/>
+    <circle cx="44" cy="30" r="11" fill="${SK}"/><ellipse cx="44" cy="25" rx="6" ry="4" fill="#fbe6d0"/>
+    <circle cx="61" cy="28" r="8.5" fill="${SK}"/><circle cx="74" cy="33" r="7.5" fill="${SK}"/>
+    <circle cx="84" cy="41" r="6.5" fill="${SK}"/><circle cx="91" cy="51" r="5.5" fill="${SK}"/>
+    ${ring(44,30,17)}`);
+}
+function skin(){
+  // Unterarm mit Markierung und vergrössertem Hautausschnitt
+  let seed = 7; const rnd = () => (seed = (seed*9301+49297) % 233280) / 233280;
+  let texture = "";
+  const cx=160, cy=42, r=36;
+  for (let i=0;i<70;i++){
+    const a = rnd()*Math.PI*2, d = Math.sqrt(rnd())*(r-6);
+    texture += `<circle cx="${(cx+Math.cos(a)*d).toFixed(1)}" cy="${(cy+Math.sin(a)*d).toFixed(1)}" r="${(0.8+rnd()*1.2).toFixed(1)}" fill="${SKD}"/>`;
+  }
+  for (let i=0;i<14;i++){
+    const a = rnd()*Math.PI*2, d = Math.sqrt(rnd())*(r-14), x=cx+Math.cos(a)*d, y=cy+Math.sin(a)*d;
+    texture += `<path d="M${x.toFixed(1)} ${y.toFixed(1)} q6 -4 12 0" fill="none" stroke="${SKD}" stroke-width="1"/>`;
+  }
+  return svg("0 0 230 140", `
+    <rect x="4" y="84" width="150" height="38" rx="18" fill="${SK}"/>
+    <ellipse cx="170" cy="104" rx="26" ry="20" fill="${SK}"/>
+    <path d="M190 96 q18 -2 26 6 M192 106 q18 2 26 8" fill="none" stroke="${SK}" stroke-width="9" stroke-linecap="round"/>
+    <line x1="62" y1="94" x2="${cx-24}" y2="${cy+25}" stroke="${RED}" stroke-width="2"/>
+    <line x1="76" y1="98" x2="${cx-12}" y2="${cy+34}" stroke="${RED}" stroke-width="2"/>
+    ${ring(68,102,12)}
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="${SK}"/>${texture}${ring(cx,cy,r)}`);
+}
+const IMAGES = {
+  hals: () => figureFront(ring(60,52,14)),
+  schulter: () => figureFront(ring(34,66,15)),
+  ruecken: figureBack,
+  zeh: foot,
+  haut: skin
+};
+// Farben: ein Farbkreis
+const swatch = c => svg("0 0 100 100", `<circle cx="50" cy="50" r="44" fill="${c}" stroke="rgba(0,0,0,.25)" stroke-width="2.5"/>`);
+
+// Formen: einfache Zeichnungen in Blau
+const SHAPE_FILL = "#4169E1", SHAPE_DARK = "#2a46a8", SHAPE_LIGHT = "#7d9bf0";
+const polyPts = (n, r, rot) => Array.from({length:n}, (_,i) => {
+  const a = (rot + i*360/n) * Math.PI/180; return (50 + r*Math.cos(a)).toFixed(1) + "," + (50 + r*Math.sin(a)).toFixed(1);
+}).join(" ");
+function starPts(){
+  return Array.from({length:10}, (_,i) => {
+    const a = (-90 + i*36) * Math.PI/180, r = i%2 ? 20 : 46;
+    return (50 + r*Math.cos(a)).toFixed(1) + "," + (52 + r*Math.sin(a)).toFixed(1);
+  }).join(" ");
+}
+function spiralPath(){
+  let d = "";
+  for (let i=0;i<=120;i++){ const t = i/120*3.2*Math.PI*2, r = 2 + t*2.3;
+    d += (i?"L":"M") + (50 + r*Math.cos(t)).toFixed(1) + " " + (50 + r*Math.sin(t)).toFixed(1) + " "; }
+  return d;
+}
+const F = `fill="${SHAPE_FILL}"`;
+const SHAPES = {
+  circle:    () => `<circle cx="50" cy="50" r="42" ${F}/>`,
+  square:    () => `<rect x="12" y="12" width="76" height="76" ${F}/>`,
+  triangle:  () => `<polygon points="50,10 92,86 8,86" ${F}/>`,
+  rectangle: () => `<rect x="6" y="26" width="88" height="48" ${F}/>`,
+  oval:      () => `<ellipse cx="50" cy="50" rx="44" ry="26" ${F}/>`,
+  star:      () => `<polygon points="${starPts()}" ${F}/>`,
+  heart:     () => `<path d="M50 90 C8 58 6 24 29 17 C41 13 50 22 50 29 C50 22 59 13 71 17 C94 24 92 58 50 90Z" ${F}/>`,
+  rhombus:   () => `<polygon points="50,6 90,50 50,94 10,50" ${F}/>`,
+  pentagon:  () => `<polygon points="${polyPts(5,44,-90)}" ${F}/>`,
+  hexagon:   () => `<polygon points="${polyPts(6,44,0)}" ${F}/>`,
+  octagon:   () => `<polygon points="${polyPts(8,44,22.5)}" ${F}/>`,
+  trapezoid: () => `<polygon points="28,22 72,22 94,78 6,78" ${F}/>`,
+  cross:     () => `<polygon points="38,8 62,8 62,38 92,38 92,62 62,62 62,92 38,92 38,62 8,62 8,38 38,38" ${F}/>`,
+  arrow:     () => `<polygon points="6,38 56,38 56,16 94,50 56,84 56,62 6,62" ${F}/>`,
+  semicircle:() => `<path d="M8 66 A42 42 0 0 1 92 66 Z" ${F}/>`,
+  crescent:  () => `<path d="M60 8 A42 42 0 1 0 60 92 A58 58 0 0 1 60 8 Z" ${F}/>`,
+  ring:      () => `<circle cx="50" cy="50" r="34" fill="none" stroke="${SHAPE_FILL}" stroke-width="16"/>`,
+  spiral:    () => `<path d="${spiralPath()}" fill="none" stroke="${SHAPE_FILL}" stroke-width="5" stroke-linecap="round"/>`,
+  zigzag:    () => `<polyline points="6,70 24,30 42,70 60,30 78,70 94,34" fill="none" stroke="${SHAPE_FILL}" stroke-width="8" stroke-linejoin="round" stroke-linecap="round"/>`,
+  line:      () => `<line x1="10" y1="90" x2="90" y2="10" stroke="${SHAPE_FILL}" stroke-width="8" stroke-linecap="round"/>`,
+  dot:       () => `<circle cx="50" cy="50" r="9" ${F}/>`,
+  cube:      () => `<polygon points="50,8 90,28 50,48 10,28" fill="${SHAPE_LIGHT}"/><polygon points="10,28 50,48 50,92 10,72" ${F}/><polygon points="90,28 50,48 50,92 90,72" fill="${SHAPE_DARK}"/>`,
+  sphere:    () => `<defs><radialGradient id="sg" cx="35%" cy="32%" r="75%"><stop offset="0" stop-color="#b9c9ff"/><stop offset=".55" stop-color="${SHAPE_FILL}"/><stop offset="1" stop-color="#1f2f78"/></radialGradient></defs><circle cx="50" cy="50" r="42" fill="url(#sg)"/>`,
+  cylinder:  () => `<path d="M16 24 V74 A34 14 0 0 0 84 74 V24 Z" ${F}/><ellipse cx="50" cy="24" rx="34" ry="14" fill="${SHAPE_LIGHT}"/>`,
+  cone:      () => `<path d="M50 8 L88 76 A38 14 0 0 1 12 76 Z" ${F}/>`,
+  pyramid:   () => `<polygon points="50,8 10,76 50,92" fill="${SHAPE_LIGHT}"/><polygon points="50,8 50,92 92,76" ${F}/>`
+};
+const shapeSvg = name => svg("0 0 100 100", SHAPES[name]());
+
+// ---------- Weitere Zeichnungen (Zahlen, Kalender, Körperdetails) ----------
+const ringE = (cx,cy,rx,ry) => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="none" stroke="${RED}" stroke-width="3.5"/>`;
+
+function numSvg(a){
+  const fs = a.length <= 2 ? 70 : a.length <= 3 ? 60 : a.length <= 5 ? 46 : 32;
+  return svg("0 0 200 100", `<rect x="4" y="4" width="192" height="92" rx="14" fill="#eef2ff" stroke="#c9d3f0" stroke-width="2"/>
+    <text x="100" y="${(50 + fs*0.36).toFixed(1)}" font-size="${fs}" font-weight="700" font-family="system-ui,-apple-system,Segoe UI,sans-serif" text-anchor="middle" fill="#2a46a8">${a}</text>`);
+}
+
+function weekSvg(a){
+  const sel = a === "all" ? [0,1,2,3,4,5,6] : a === "we" ? [5,6] : a === "wd" ? [0,1,2,3,4] : [Number(a) - 1];
+  let g = `<rect x="4" y="4" width="222" height="20" rx="5" fill="#2a46a8"/><circle cx="40" cy="14" r="3" fill="#fff"/><circle cx="190" cy="14" r="3" fill="#fff"/>`;
+  for (let i = 0; i < 7; i++){
+    const x = 6 + i*31.5, on = sel.includes(i);
+    g += `<rect x="${x}" y="30" width="28" height="52" rx="5" fill="${on ? "#4169E1" : (i >= 5 ? "#f6dede" : "#eef2ff")}" stroke="${on ? "#2a46a8" : "#c9d3f0"}" stroke-width="2"/>`;
+    g += `<circle cx="${x+14}" cy="44" r="4" fill="${on ? "#fff" : "#c9d3f0"}"/>`;
+  }
+  return svg("0 0 230 88", g);
+}
+
+const SEASON_BG = ["#dbe9ff","#dbe9ff","#dff5d8","#dff5d8","#dff5d8","#fff1b8","#fff1b8","#fff1b8","#ffe0c2","#ffe0c2","#ffe0c2","#dbe9ff"];
+const SEASON_ICON = ["❄️","❄️","🌸","🌸","🌸","☀️","☀️","☀️","🍂","🍂","🍂","❄️"];
+function monthSvg(a){
+  const all = a === "all", n = Number(a) - 1;
+  let g = "";
+  for (let i = 0; i < 12; i++){
+    const x = 6 + (i%4)*48, y = 6 + Math.floor(i/4)*48, on = all || i === n;
+    g += `<rect x="${x}" y="${y}" width="44" height="44" rx="6" fill="${on ? "#4169E1" : SEASON_BG[i]}" stroke="${on ? "#2a46a8" : "rgba(0,0,0,.12)"}" stroke-width="2"/>`;
+    g += `<text x="${x+22}" y="${y+29}" font-size="${on && !all ? 22 : 15}" text-anchor="middle" opacity="${on ? 1 : .55}">${SEASON_ICON[i]}</text>`;
+  }
+  return svg("0 0 200 152", g);
+}
+
+function handSvg(a){
+  const M = {thumb:ring(36,114,15), index:ring(71,50,14), middle:ring(92,40,14), ring:ring(113,48,14),
+             pinky:ring(133,66,14), palm:ring(102,135,26), wrist:ring(103,190,22)};
+  return svg("0 0 180 215", `<g transform="translate(20,0)" fill="${SK}" stroke="${SKD}" stroke-width="1.5">
+    <rect x="58" y="160" width="50" height="55" rx="8"/>
+    <rect x="26" y="86" width="20" height="70" rx="10" transform="rotate(-30 46 150)"/>
+    <rect x="42" y="30" width="18" height="84" rx="9"/><rect x="63" y="18" width="18" height="94" rx="9"/>
+    <rect x="84" y="28" width="18" height="84" rx="9"/><rect x="104" y="50" width="17" height="64" rx="8.5"/>
+    <rect x="40" y="92" width="84" height="80" rx="24" stroke="none"/>
+    <path d="M56 128 Q80 140 108 122 M60 150 Q84 146 104 156" fill="none" stroke-width="2"/>
+  </g>${M[a] || ""}`);
+}
+
+function faceSvg(a){
+  const M = {cheek:ring(70,144,18), chin:ring(110,194,16), lip:ring(110,164,22), nostril:ring(104,141,9),
+             earlobe:ring(38,142,10), temple:ring(50,98,14), jaw:ring(62,174,16)};
+  return svg("0 0 220 220", `
+    <ellipse cx="38" cy="122" rx="12" ry="22" fill="${SK}" stroke="${SKD}" stroke-width="1.5"/>
+    <ellipse cx="182" cy="122" rx="12" ry="22" fill="${SK}" stroke="${SKD}" stroke-width="1.5"/>
+    <ellipse cx="110" cy="120" rx="72" ry="88" fill="${SK}"/>
+    <path d="M38 104 C34 24 186 24 182 104 C172 62 48 62 38 104Z" fill="${HAIR}"/>
+    <path d="M66 94 Q82 84 98 92" fill="none" stroke="${HAIR}" stroke-width="5" stroke-linecap="round"/>
+    <path d="M122 92 Q138 84 154 94" fill="none" stroke="${HAIR}" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="82" cy="110" rx="13" ry="8" fill="#fff"/><ellipse cx="138" cy="110" rx="13" ry="8" fill="#fff"/>
+    <circle cx="82" cy="110" r="6" fill="#4f7f55"/><circle cx="138" cy="110" r="6" fill="#4f7f55"/>
+    <circle cx="82" cy="110" r="2.8" fill="#111"/><circle cx="138" cy="110" r="2.8" fill="#111"/>
+    <path d="M110 112 L101 138 Q110 146 119 138" fill="none" stroke="${SKD}" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="104" cy="141" rx="3.5" ry="2.2" fill="#a8744a"/><ellipse cx="116" cy="141" rx="3.5" ry="2.2" fill="#a8744a"/>
+    <circle cx="72" cy="146" r="10" fill="#f0a9a0" opacity=".45"/><circle cx="148" cy="146" r="10" fill="#f0a9a0" opacity=".45"/>
+    <path d="M90 162 Q100 155 110 159 Q120 155 130 162 Q110 178 90 162Z" fill="#c9645f"/>
+    ${M[a] || ""}`);
+}
+
+function eyeSvg(a){
+  const lidY = x => { const t = (x-40)/140; return (1-t)*(1-t)*85 + 2*t*(1-t)*40 + t*t*85; };
+  let lashes = "";
+  for (let x = 56; x <= 166; x += 11){
+    const y = lidY(x), dx = (x-110)*0.12;
+    lashes += `<line x1="${x}" y1="${y.toFixed(1)}" x2="${(x+dx).toFixed(1)}" y2="${(y-13).toFixed(1)}" stroke="#2b1d12" stroke-width="2.5" stroke-linecap="round"/>`;
+  }
+  const M = {brow:ringE(110,26,80,20), lash:ring(152,62,14), lid:ring(80,61,10), pupil:ring(110,84,13)};
+  return svg("0 0 220 135", `<rect x="0" y="0" width="220" height="135" rx="16" fill="${SK}"/>
+    <path d="M40 40 Q110 8 180 36" fill="none" stroke="${HAIR}" stroke-width="10" stroke-linecap="round"/>
+    <path d="M44 72 Q110 30 176 72" fill="none" stroke="${SKD}" stroke-width="2"/>
+    <path d="M40 85 Q110 40 180 85 Q110 125 40 85Z" fill="#fff" stroke="${SKD}" stroke-width="2"/>
+    <circle cx="110" cy="84" r="20" fill="#4f7f55"/><circle cx="110" cy="84" r="9" fill="#111"/><circle cx="116" cy="78" r="3.5" fill="#fff"/>
+    ${lashes}
+    <path d="M40 85 Q110 40 180 85" fill="none" stroke="#5a3a22" stroke-width="3"/>
+    ${M[a] || ""}`);
+}
+
+function bodySvg(a){
+  const up = a === "armpit";
+  const arms = up
+    ? `<rect x="18" y="8" width="14" height="62" rx="7" fill="${SK}"/><rect x="88" y="8" width="14" height="62" rx="7" fill="${SK}"/><circle cx="25" cy="8" r="8" fill="${SK}"/><circle cx="95" cy="8" r="8" fill="${SK}"/>`
+    : `<rect x="18" y="62" width="14" height="66" rx="7" fill="${SK}"/><rect x="88" y="62" width="14" height="66" rx="7" fill="${SK}"/><circle cx="25" cy="132" r="8" fill="${SK}"/><circle cx="95" cy="132" r="8" fill="${SK}"/>`;
+  const M = {chest:ring(60,78,17), navel:ring(60,108,8), waist:ringE(60,104,34,9), hip:ring(36,124,11),
+             thigh:ring(49,154,11), armpit:ring(35,66,9)};
+  return svg("0 0 120 200", `${arms}
+    <rect x="40" y="120" width="18" height="72" rx="8" fill="${SK}"/><rect x="62" y="120" width="18" height="72" rx="8" fill="${SK}"/>
+    <rect x="37" y="188" width="24" height="9" rx="4" fill="#333"/><rect x="59" y="188" width="24" height="9" rx="4" fill="#333"/>
+    <rect x="52" y="42" width="16" height="22" rx="4" fill="${SK}"/>
+    <path d="M32 74 Q32 58 48 58 L72 58 Q88 58 88 74 L84 98 Q80 110 84 124 L36 124 Q40 110 36 98 Z" fill="${SK}"/>
+    <path d="M44 80 Q52 88 59 80 M61 80 Q68 88 76 80" fill="none" stroke="${SKD}" stroke-width="1.6"/>
+    <circle cx="60" cy="108" r="1.8" fill="#a8744a"/>
+    <rect x="36" y="118" width="48" height="24" rx="6" fill="${PANTS}"/>
+    <circle cx="60" cy="28" r="18" fill="${SK}"/>
+    <path d="M42 26 C42 6 78 6 78 26 C72 15 48 15 42 26Z" fill="${HAIR}"/>
+    <circle cx="53" cy="30" r="2" fill="#333"/><circle cx="67" cy="30" r="2" fill="#333"/>
+    <path d="M54 37 Q60 42 66 37" fill="none" stroke="#333" stroke-width="1.8" stroke-linecap="round"/>
+    ${M[a] || ""}`);
+}
+
+const BACK_MARK = {nape:ring(60,54,10), spine:ringE(60,92,11,33), buttocks:ringE(60,131,26,15), calf:ring(49,170,11)};
+
+function footSideSvg(a){
+  const M = {heel:ring(48,108,16), ankle:ring(64,78,11), sole:ringE(112,121,64,9)};
+  return svg("0 0 200 140", `<rect x="42" y="0" width="38" height="80" fill="${SK}"/>
+    <path d="M42 60 L40 104 Q40 120 58 120 L168 120 Q188 120 188 106 Q186 94 166 90 L104 74 Q86 70 80 56 L80 60 Z" fill="${SK}"/>
+    <circle cx="64" cy="78" r="5" fill="${SKD}"/>
+    <path d="M150 92 Q156 100 152 112 M165 94 Q170 102 167 112" fill="none" stroke="${SKD}" stroke-width="1.5"/>
+    <path d="M44 120 L176 120" stroke="${SKD}" stroke-width="2"/>
+    ${M[a] || ""}`);
+}
+
+const GEN = {num:numSvg, week:weekSvg, month:monthSvg, hand:handSvg, face:faceSvg, eye:eyeSvg, body:bodySvg,
+             back: b => figureBack(BACK_MARK[b] || ""), footside:footSideSvg};
+
+const pic = w => {
+  if (w.img && IMAGES[w.img]) return IMAGES[w.img]();
+  if (w.img && w.img.startsWith("color:")) return swatch(w.img.slice(6));
+  if (w.img && w.img.startsWith("shape:") && SHAPES[w.img.slice(6)]) return shapeSvg(w.img.slice(6));
+  if (w.img && w.img.includes(":")) {
+    const i = w.img.indexOf(":"), k = w.img.slice(0, i);
+    if (GEN[k]) return GEN[k](w.img.slice(i + 1));
+  }
+  return w.emoji;
+};
+
+// ---------- Speicherstand ----------
+const KEY = "vokabeln-4sprachen-v1";
+let state = {known:{}, topic:"tiere", filter:"all", lang:"es"};
+try {
+  const s = JSON.parse(localStorage.getItem(KEY));
+  if (s) Object.assign(state, s);
+  else {
+    // Fortschritt aus der Spanisch-App übernehmen (gleiche Web-Adresse)
+    const old = JSON.parse(localStorage.getItem("spanisch-vokabeln-v6"));
+    if (old && old.known) {
+      Object.entries(old.known).forEach(([k, v]) => state.known["es:" + k] = v);
+      if (old.topic) state.topic = old.topic;
+    }
+  }
+} catch(e){}
+if (!LANGS[state.lang]) state.lang = "es";
+if (!TOPICS[state.topic]) state.topic = "tiere";
+if (!["all","unknown","known"].includes(state.filter)) state.filter = "all";
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} };
+const $ = id => document.getElementById(id);
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const words = () => TOPICS[state.topic].words;
+const L = () => LANGS[state.lang];
+const tgt = w => w[state.lang];
+
+// ---------- Kategorien: Alle Wörter / Nicht gewusst / Gewusst ----------
+const wordKey = w => state.lang + ":" + state.topic + ":" + w.id;
+const isKnown = w => state.known[wordKey(w)] === true;
+const isUnknown = w => state.known[wordKey(w)] === false;
+const inFilter = w => state.filter === "all" || (state.filter === "known" ? isKnown(w) : isUnknown(w));
+const FILTERS = [
+  {id:"all",     label:"Alle Wörter",   cls:"",   count: () => words().length},
+  {id:"unknown", label:"Nicht gewusst", cls:"b1", count: () => words().filter(isUnknown).length},
+  {id:"known",   label:"Gewusst",       cls:"b5", count: () => words().filter(isKnown).length}
+];
+function renderTiles(){
+  $("boxes").innerHTML = FILTERS.map(f =>
+    `<div class="bx ${f.cls} ${state.filter===f.id ? "active" : ""}" data-f="${f.id}"><span class="n">${f.count()}</span><span class="t">${f.label}</span></div>`
+  ).join("");
+}
+function setFilter(f){
+  state.filter = f; save(); deck = []; roundOn = false;
+  renderTiles(); nextCard(); renderList();
+}
+$("boxes").onclick = e => { const t = e.target.closest("[data-f]"); if (t) setFilter(t.dataset.f); };
+$("allBtn").onclick = () => setFilter("all");
+$("againBtn").onclick = () => { deck = []; roundOn = false; nextCard(); };
+
+// «Zähler auf 0 setzen»: im Quiz startet es das Quiz neu, sonst setzt es die Karteikarten-Zähler zurück.
+// (Bewusst ohne Rückfrage-Dialog: Browser-Dialoge werden in manchen Ansichten blockiert.)
+let currentTab = "cards";
+$("resetBtn").onclick = () => {
+  if (currentTab === "quiz") { startQuiz(); return; }
+  Object.keys(state.known).forEach(k => { if (k.startsWith(state.lang + ":")) delete state.known[k]; });
+  state.filter = "all"; save(); deck = []; roundOn = false;
+  renderTiles(); nextCard(); renderList();
+};
+
+// Sprach-Auswahl (oben in der Kopfleiste)
+const langSel = $("langSel");
+Object.entries(LANGS).forEach(([k, l]) => langSel.add(new Option(l.flag + " " + l.name + " Vokabeln", k)));
+langSel.value = state.lang;
+const dirLabel = () => "Richtung: " + (esToDe ? L().name + " → Deutsch" : "Deutsch → " + L().name);
+function applyLang(){
+  document.title = L().name + " Vokabeln";
+  $("dirBtn").textContent = dirLabel();
+}
+langSel.onchange = () => {
+  state.lang = langSel.value; save(); deck = []; roundOn = false;
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  applyLang(); renderTiles(); nextCard(); startQuiz(); renderList();
+};
+
+// Themen-Auswahl
+const sel = $("topicSel");
+GROUPS.forEach(([g, keys]) => {
+  const og = document.createElement("optgroup"); og.label = g;
+  keys.forEach(k => og.appendChild(new Option(TOPICS[k].name, k)));
+  sel.appendChild(og);
+});
+sel.value = state.topic;
+sel.onchange = () => {
+  state.topic = sel.value; save(); deck = []; roundOn = false;
+  $("count").textContent = "(" + words().length + " Vokabeln)";
+  renderTiles(); nextCard(); startQuiz(); renderList();
+};
+
+// Tabs
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("nav button").forEach(x => x.classList.toggle("active", x===b));
+  ["cards","quiz","list"].forEach(t => $(t).classList.toggle("hidden", t!==b.dataset.tab));
+  if (b.dataset.tab==="list") renderList();
+  currentTab = b.dataset.tab;
+  $("resetBtn").textContent = currentTab === "quiz" ? "Quiz neu starten (Zähler auf 0)" : "Zähler auf 0 setzen";
+  $("cardTiles").classList.toggle("hidden", b.dataset.tab==="quiz");
+  if (b.dataset.tab==="quiz" && !quizStarted) startQuiz();
+});
+
+// ---------- Karteikarten ----------
+let deck = [], cur = null, flipped = false;
+let roundOn = false, roundTotal = 0, roundOk = 0, roundBad = 0; // eine Runde = alle Karten der Kategorie einmal
+let esToDe = false; // false: Vorderseite Deutsch, Rückseite Fremdsprache
+
+function newRound(){
+  deck = shuffle(words().filter(inFilter));
+  roundTotal = deck.length; roundOk = 0; roundBad = 0; roundOn = true;
+}
+function nextCard(){
+  if (!roundOn) newRound();
+  if (!deck.length) { roundTotal ? showFinished() : showDone(); return; }
+  $("study").classList.remove("hidden"); $("done").classList.add("hidden");
+  cur = deck.pop(); flipped = false; showCard();
+}
+function showFinished(){
+  $("study").classList.add("hidden"); $("done").classList.remove("hidden");
+  $("doneTitle").textContent = "Training beendet";
+  $("doneInfo").textContent = "Alle " + roundTotal + " Karten durchgegangen: " + roundOk + " gewusst, " + roundBad + " nicht gewusst.";
+  $("againBtn").classList.remove("hidden"); $("allBtn").classList.add("hidden");
+}
+function showDone(){
+  $("study").classList.add("hidden"); $("done").classList.remove("hidden");
+  $("againBtn").classList.add("hidden"); $("allBtn").classList.remove("hidden");
+  $("doneTitle").textContent = "Hier ist noch nichts drin";
+  $("doneInfo").textContent = "Karten, die du mit «" + (state.filter === "unknown" ? "Nicht gewusst" : "Gewusst") + "» markierst, erscheinen hier.";
+}
+function showCard(){
+  $("flash").classList.toggle("back", flipped);
+  const showEs = esToDe ? !flipped : flipped;
+  $("fLang").textContent = (showEs ? L().native : "Deutsch") + " · Karte " + (roundTotal - deck.length) + " von " + roundTotal;
+  $("fEmoji").innerHTML = pic(cur);
+  $("fWord").textContent = showEs ? tgt(cur) : cur.de;
+  $("fHint").textContent = flipped ? "" : "Tippen zum Umdrehen";
+  $("known").disabled = $("again").disabled = !flipped;
+}
+$("flash").onclick = () => { flipped = !flipped; showCard(); };
+$("dirBtn").onclick = () => {
+  esToDe = !esToDe;
+  $("dirBtn").textContent = dirLabel();
+  flipped = false; showCard();
+};
+function speak(text){
+  if (!("speechSynthesis" in window)) return;
+  // Das Zeichen «↔» bei Gegenteilen nicht mitlesen, sondern als kurze Pause sprechen
+  text = text.replace(/\s*↔\s*/g, ". ");
+  const u = new SpeechSynthesisUtterance(text); u.lang = L().voice; u.rate = .85;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+$("speak").onclick = () => speak(tgt(cur));
+
+function rate(known){
+  if (!flipped) return;
+  state.known[wordKey(cur)] = known; save();
+  if (known) roundOk++; else roundBad++;
+  renderTiles(); renderList(); nextCard();
+}
+$("known").onclick = () => rate(true);
+$("again").onclick = () => rate(false);
+
+// ---------- Quiz ----------
+// Eigene Zähler: starten bei jedem neuen Quiz bei 0. Jedes Wort wird einmal gefragt.
+let qHideSpeak = false;
+let quizStarted = false, qDeck = [], qOk = [], qBad = [], qTotal = 0, qView = null, qWord = null, answered = false;
+const byId = id => words().find(w => w.id === id);
+
+function startQuiz(){
+  quizStarted = true;
+  qDeck = shuffle(words()); qTotal = qDeck.length; qOk = []; qBad = []; qView = null; qWord = null;
+  renderQuizTiles(); renderQuizReview(); newQuestion();
+}
+function renderQuizTiles(){
+  const tile = (v, cls, n, label) => `<div class="bx ${cls} ${qView===v ? "active" : ""}" data-q="${v}"><span class="n">${n}</span><span class="t">${label}</span></div>`;
+  $("qTiles").innerHTML =
+    tile("all", "", qTotal, "Alle Wörter") +
+    tile("bad", "b1", qBad.length, "Nicht gewusst") +
+    tile("ok", "b5", qOk.length, "Gewusst");
+  $("qProgress").textContent = (qOk.length + qBad.length) + " von " + qTotal + " beantwortet";
+}
+function renderQuizReview(){
+  const box = $("qReview");
+  if (!qView) { box.classList.add("hidden"); return; }
+  const ids = qView === "all" ? words().map(w => w.id) : (qView === "ok" ? qOk : qBad);
+  const title = qView === "all" ? "Alle Wörter" : (qView === "ok" ? "Gewusste Wörter" : "Nicht gewusste Wörter");
+  box.classList.remove("hidden");
+  box.innerHTML = `<div class="hint" style="margin:0 0 6px"><b>${title} (${ids.length})</b> – zum Ausblenden die Kachel nochmals anklicken</div>` +
+    (ids.length
+      ? `<table class="list">` + ids.map(id => { const w = byId(id); return `<tr><td>${pic(w)}</td><td><b>${tgt(w)}</b></td><td>${w.de}</td></tr>`; }).join("") + `</table>`
+      : `<div class="hint">Noch keine Wörter hier.</div>`);
+}
+$("qTiles").onclick = e => {
+  const t = e.target.closest("[data-q]"); if (!t) return;
+  qView = (qView === t.dataset.q) ? null : t.dataset.q;
+  renderQuizTiles(); renderQuizReview();
+};
+$("qNew").onclick = startQuiz;
+$("qAgain").onclick = startQuiz;
+
+function newQuestion(){
+  answered = false; $("next").disabled = true;
+  if (!qDeck.length) {
+    $("qPlay").classList.add("hidden"); $("qDone").classList.remove("hidden");
+    $("qDoneInfo").textContent = qOk.length + " gewusst, " + qBad.length + " nicht gewusst.";
+    return;
+  }
+  $("qPlay").classList.remove("hidden"); $("qDone").classList.add("hidden");
+  qWord = qDeck.pop();
+  $("next").textContent = qDeck.length ? "Weiter" : "Ergebnis";
+  const toSpanish = Math.random() < .5;
+  // Ist die Frage deutsch, würde die Aussprache die Antwort verraten: dann erst nach dem Antworten.
+  qHideSpeak = toSpanish; $("qSpeak").disabled = qHideSpeak;
+  $("qEmoji").innerHTML = pic(qWord);
+  $("qWord").textContent = toSpanish ? qWord.de : tgt(qWord);
+  $("qHint").textContent = toSpanish ? "Wie heisst das auf " + L().name + "?" : "Was heisst das auf Deutsch?";
+  const wrong = shuffle(words().filter(w => w.id!==qWord.id)).slice(0,3);
+  const opts = shuffle([qWord, ...wrong]);
+  const box = $("opts"); box.innerHTML = "";
+  opts.forEach(o => {
+    const b = document.createElement("button");
+    b.textContent = toSpanish ? tgt(o) : o.de;
+    b.onclick = () => {
+      if (answered) return; answered = true;
+      const ok = o.id === qWord.id;
+      b.classList.add(ok ? "right" : "wrong");
+      if (!ok) [...box.children].forEach((c,i) => { if (opts[i].id===qWord.id) c.classList.add("right"); });
+      (ok ? qOk : qBad).push(qWord.id);
+      renderQuizTiles(); renderQuizReview();
+      $("qSpeak").disabled = false;
+      $("next").disabled = false;
+    };
+    box.appendChild(b);
+  });
+}
+$("next").onclick = newQuestion;
+$("qSpeak").onclick = () => { if (qWord) speak(tgt(qWord)); };
+
+// ---------- Liste ----------
+function renderList(){
+  $("table").innerHTML = words().filter(inFilter).map(w =>
+    `<tr><td>${pic(w)}</td><td><b>${tgt(w)}</b></td><td>${w.de}</td><td class="fach">${isKnown(w) ? "✅ gewusst" : isUnknown(w) ? "nicht gewusst" : ""}</td></tr>`
+  ).join("");
+}
+
+$("count").textContent = "(" + words().length + " Vokabeln)";
+applyLang(); renderTiles(); nextCard(); renderList();
+
+// Offline-Betrieb als Web-App
+if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
+</script>
+</body>
+</html>

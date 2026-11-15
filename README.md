@@ -15,3 +15,8 @@ Der Lernfortschritt wird auf jedem Gerät separat gespeichert.
 - `index.html` – die ganze App (Vokabeln, Bilder, Karteikarten, Quiz)
 - `manifest.webmanifest`, `sw.js` – Web-App-Einstellungen und Offline-Betrieb
 - `icon-*.png`, `apple-touch-icon.png` – App-Symbol
+
+## Zweite App: Vokabeln in 4 Sprachen
+Im Ordner `sprachen/` liegt eine zweite App mit **Spanisch, Englisch, Französisch und Italienisch**
+(gleiche Themen und Funktionen, Sprachwahl oben in der grauen Kopfleiste):
+https://paci1-fun.github.io/spanisch-vokabeln/sprachen/
