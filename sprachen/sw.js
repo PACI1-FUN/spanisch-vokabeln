@@ -1,6 +1,6 @@
 // Offline-Speicher für die Vokabeln-App (4 Sprachen).
 // Bei jeder neuen Version die Nummer erhöhen, damit die Geräte die Änderungen laden.
-const CACHE = "vokabeln-4sprachen-v1";
+const CACHE = "vokabeln-4sprachen-v2";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 
 self.addEventListener("install", event => {

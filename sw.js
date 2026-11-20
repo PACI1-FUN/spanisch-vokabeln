@@ -1,6 +1,6 @@
 // Offline-Speicher für die Spanisch-Vokabeln-App.
 // Bei jeder neuen Version die Nummer erhöhen, damit die Geräte die Änderungen laden.
-const CACHE = "spanisch-vokabeln-v16";
+const CACHE = "spanisch-vokabeln-v17";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 
 self.addEventListener("install", event => {

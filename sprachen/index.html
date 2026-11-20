@@ -1062,13 +1062,71 @@ $("dirBtn").onclick = () => {
   $("dirBtn").textContent = dirLabel();
   flipped = false; showCard();
 };
+// ---------- Aussprache (robust für iPhone/iPad) ----------
+// Bekannte Schwächen der Sprachausgabe in Safari werden hier abgefangen:
+// sofortiges Abbrechen+Neustarten, hängende Ausgabe nach dem Hintergrund,
+// fehlende Stimme, vorzeitig aufgeräumte Sprachausgabe-Objekte.
+let VOICES = [];
+function loadVoices(){ try { VOICES = window.speechSynthesis.getVoices() || []; } catch(e) {} }
+if ("speechSynthesis" in window) {
+  loadVoices();
+  try { speechSynthesis.addEventListener("voiceschanged", loadVoices); } catch(e) { speechSynthesis.onvoiceschanged = loadVoices; }
+}
+function pickVoice(lang){
+  if (!VOICES.length) loadVoices();
+  const norm = v => (v.lang || "").toLowerCase().replace("_", "-");
+  const l = lang.toLowerCase(), base = l.slice(0, 2);
+  return VOICES.find(v => norm(v) === l && v.localService)
+      || VOICES.find(v => norm(v) === l)
+      || VOICES.find(v => norm(v).startsWith(base))
+      || null;
+}
+function speechHint(){
+  let n = document.getElementById("speechNote");
+  if (!n) {
+    n = document.createElement("div"); n.id = "speechNote";
+    n.style.cssText = "position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translateX(-50%);" +
+      "background:#333;color:#fff;padding:10px 14px;border-radius:10px;font-size:.9rem;max-width:90%;text-align:center;z-index:50;box-shadow:0 4px 14px rgba(0,0,0,.25)";
+    document.body.appendChild(n);
+  }
+  n.textContent = "Keine Aussprache zu hören? Bitte Lautstärke und Stummschalter am Gerät prüfen.";
+  n.style.display = "block";
+  clearTimeout(n._t); n._t = setTimeout(() => { n.style.display = "none"; }, 5000);
+}
+let currentUtterance = null; // Verweis behalten, sonst bricht Safari die Ausgabe teils ab
 function speak(text){
-  if (!("speechSynthesis" in window)) return;
+  if (!("speechSynthesis" in window)) { speechHint(); return; }
+  const synth = window.speechSynthesis;
   // Das Zeichen «↔» bei Gegenteilen nicht mitlesen, sondern als kurze Pause sprechen
   text = text.replace(/\s*↔\s*/g, ". ");
-  const u = new SpeechSynthesisUtterance(text); u.lang = L().voice; u.rate = .85;
-  speechSynthesis.cancel(); speechSynthesis.speak(u);
+  const lang = L().voice;
+  const make = () => {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    try { const v = pickVoice(lang); if (v) u.voice = v; } catch(e) {} // ohne passende Stimme: Standardstimme
+    u.rate = .85; u.volume = 1;
+    return u;
+  };
+  let started = false, tries = 0;
+  const go = () => {
+    tries++;
+    const u = make(); currentUtterance = u;
+    u.onstart = () => { started = true; };
+    u.onerror = e => { if (e && (e.error === "interrupted" || e.error === "canceled")) return; if (!started) speechHint(); };
+    try { synth.resume(); } catch(e) {}
+    synth.speak(u);
+    // Wenn nach 1.5 s nichts begonnen hat: Sprachausgabe zurücksetzen und einmal neu versuchen
+    setTimeout(() => {
+      if (started || synth.speaking) return;
+      if (tries < 2) { synth.cancel(); setTimeout(go, 150); } else speechHint();
+    }, 1500);
+  };
+  if (synth.speaking || synth.pending) { synth.cancel(); setTimeout(go, 150); } else go();
 }
+// Nach Rückkehr aus dem Hintergrund eine hängende Sprachausgabe zurücksetzen
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && "speechSynthesis" in window) { try { speechSynthesis.cancel(); } catch(e) {} }
+});
 $("speak").onclick = () => speak(tgt(cur));
 
 function rate(known){
