@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aussprache-Test</title>
+<style>
+  :root { --bg:#faf6ef; --ink:#2b2b2b; --muted:#7a7468; --blue:#4169E1; --ok:#2e8b57; --bad:#c0392b; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",sans-serif; background:var(--bg); color:var(--ink); }
+  header { background:#5f6368; color:#fff; padding:calc(14px + env(safe-area-inset-top)) 16px 14px; }
+  header h1 { margin:0; font-size:1.2rem; }
+  main { max-width:640px; margin:0 auto; padding:16px; }
+  p { line-height:1.45; }
+  .test { background:#fff; border-radius:12px; padding:12px 14px; margin:10px 0; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+  .test b { display:block; margin-bottom:4px; }
+  .test small { color:var(--muted); display:block; margin-bottom:8px; }
+  button { border:none; border-radius:10px; padding:10px 16px; font-size:1rem; background:var(--blue); color:#fff; cursor:pointer; touch-action:manipulation; }
+  button.grey { background:#e8e2d6; color:#222; }
+  .res { margin-left:8px; font-weight:600; }
+  .res.ok { color:var(--ok); } .res.bad { color:var(--bad); }
+  pre { background:#fff; border-radius:12px; padding:12px; font-size:.75rem; white-space:pre-wrap; word-break:break-word; max-height:320px; overflow:auto; box-shadow:0 1px 3px rgba(0,0,0,.08); }
+</style>
+</head>
+<body>
+<header><h1>🔊 Aussprache-Test</h1></header>
+<main>
+  <p>Bitte <b>Lautstärke hoch</b> und den <b>Stummschalter aus</b>. Dann die Tests der Reihe nach antippen und jeweils kurz hinhören.
+  Unten erscheint ein Bericht – den bitte mit «Bericht kopieren» kopieren und im Chat einfügen.</p>
+
+  <div class="test"><b>1 · Piepton</b><small>Prüft, ob die Webseite überhaupt Ton ausgeben darf.</small>
+    <button onclick="beep(1)">Piepton</button><span class="res" id="r1"></span></div>
+
+  <div class="test"><b>2 · Piepton als Medienwiedergabe</b><small>Wie 1, aber als Medienton (ignoriert den Stummschalter).</small>
+    <button onclick="beep(2)">Piepton (Medien)</button><span class="res" id="r2"></span></div>
+
+  <div class="test"><b>3 · Sprechen – ganz einfach</b><small>«Hola, ¿qué tal?» ohne Zusatzeinstellungen.</small>
+    <button onclick="say(3,{})">Sprechen</button><span class="res" id="r3"></span></div>
+
+  <div class="test"><b>4 · Sprechen – ohne Sprachangabe</b><small>Lässt iOS die Sprache selbst wählen.</small>
+    <button onclick="say(4,{nolang:true})">Sprechen</button><span class="res" id="r4"></span></div>
+
+  <div class="test"><b>5 · Sprechen – mit gewählter spanischer Stimme</b><small>Nimmt ausdrücklich eine Stimme aus der Liste.</small>
+    <button onclick="say(5,{voice:true})">Sprechen</button><span class="res" id="r5"></span></div>
+
+  <div class="test"><b>6 · Sprechen – als Medienwiedergabe</b><small>So, wie es die App seit Version 18 / 3 macht.</small>
+    <button onclick="say(6,{playback:true, voice:true})">Sprechen</button><span class="res" id="r6"></span></div>
+
+  <div class="test"><b>7 · Sprechen – Deutsch</b><small>Prüft, ob es nur bei Spanisch hakt: «Guten Tag».</small>
+    <button onclick="say(7,{lang:'de-DE', text:'Guten Tag'})">Sprechen</button><span class="res" id="r7"></span></div>
+
+  <p><button class="grey" onclick="copyReport()">📋 Bericht kopieren</button> <span id="copied" class="res"></span></p>
+  <pre id="log"></pre>
+</main>
+<script>
+const logEl = document.getElementById("log");
+const lines = [];
+const log = t => { const s = new Date().toTimeString().slice(0,8) + "  " + t; lines.push(s); logEl.textContent = lines.join("\n"); };
+const res = (n, t, ok) => { const e = document.getElementById("r" + n); e.textContent = t; e.className = "res " + (ok === true ? "ok" : ok === false ? "bad" : ""); };
+
+log("Gerät: " + navigator.userAgent);
+log("Als Home-Bildschirm-App gestartet: " + (window.navigator.standalone === true || matchMedia("(display-mode: standalone)").matches));
+log("speechSynthesis vorhanden: " + ("speechSynthesis" in window) + " · audioSession vorhanden: " + !!navigator.audioSession +
+    (navigator.audioSession ? " (Typ " + navigator.audioSession.type + ")" : ""));
+
+let voices = [];
+function readVoices(tag){
+  try { voices = speechSynthesis.getVoices() || []; } catch(e) { voices = []; log("getVoices Fehler: " + e); }
+  const es = voices.filter(v => (v.lang || "").toLowerCase().startsWith("es"));
+  const de = voices.filter(v => (v.lang || "").toLowerCase().startsWith("de"));
+  log(tag + ": " + voices.length + " Stimmen insgesamt, Spanisch: " + (es.map(v => v.name + " [" + v.lang + "]").join(", ") || "keine") +
+      ", Deutsch: " + (de.length));
+}
+if ("speechSynthesis" in window) {
+  readVoices("Stimmen beim Start");
+  speechSynthesis.addEventListener("voiceschanged", () => readVoices("Stimmen nach Laden"));
+}
+
+let ctx = null;
+function beep(n){
+  try {
+    if (n === 2 && navigator.audioSession) navigator.audioSession.type = "playback";
+    if (n === 1 && navigator.audioSession) navigator.audioSession.type = "auto";
+    ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+    ctx.resume();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.value = 660; g.gain.value = 0.25; o.connect(g); g.connect(ctx.destination);
+    o.start(); o.stop(ctx.currentTime + 0.4);
+    res(n, "abgespielt – gehört?", null);
+    log("Test " + n + ": Piepton abgespielt (AudioContext Zustand: " + ctx.state + ")");
+  } catch(e) { res(n, "Fehler", false); log("Test " + n + ": Fehler " + e); }
+}
+
+let keep = null;
+function say(n, o){
+  if (!("speechSynthesis" in window)) { res(n, "nicht verfügbar", false); log("Test " + n + ": speechSynthesis fehlt"); return; }
+  const synth = speechSynthesis;
+  try {
+    if (navigator.audioSession) navigator.audioSession.type = o.playback ? "playback" : "auto";
+    const text = o.text || "Hola, ¿qué tal?";
+    const u = new SpeechSynthesisUtterance(text);
+    if (!o.nolang) u.lang = o.lang || "es-ES";
+    if (o.voice) {
+      if (!voices.length) readVoices("Stimmen (neu gelesen)");
+      const v = voices.find(v => (v.lang || "").toLowerCase().replace("_","-") === (o.lang || "es-es").toLowerCase())
+             || voices.find(v => (v.lang || "").toLowerCase().startsWith((o.lang || "es").slice(0,2)));
+      if (v) { try { u.voice = v; } catch(e) { log("Stimme setzen Fehler: " + e); } }
+      log("Test " + n + ": Stimme " + (v ? v.name + " [" + v.lang + "]" : "keine gefunden"));
+    }
+    u.volume = 1; u.rate = .9;
+    let started = false;
+    u.onstart = () => { started = true; res(n, "spricht …", true); log("Test " + n + ": onstart (Sprechen begonnen)"); };
+    u.onend = () => { log("Test " + n + ": onend (fertig)"); if (started) res(n, "fertig – gehört?", true); };
+    u.onerror = e => { res(n, "Fehler: " + (e && e.error), false); log("Test " + n + ": onerror " + (e && e.error)); };
+    keep = u;
+    if (synth.speaking || synth.pending) { log("Test " + n + ": war noch am Sprechen → cancel"); synth.cancel(); }
+    synth.speak(u);
+    log("Test " + n + ": speak() aufgerufen (speaking=" + synth.speaking + ", pending=" + synth.pending + ", paused=" + synth.paused + ")");
+    res(n, "gestartet …", null);
+    setTimeout(() => { if (!started) { res(n, "nichts gestartet", false); log("Test " + n + ": nach 3 s kein onstart (speaking=" + synth.speaking + ", pending=" + synth.pending + ")"); } }, 3000);
+  } catch(e) { res(n, "Fehler", false); log("Test " + n + ": Fehler " + e); }
+}
+
+function copyReport(){
+  const t = lines.join("\n");
+  const done = () => { document.getElementById("copied").textContent = "kopiert ✓"; };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, () => fallback());
+  else fallback();
+  function fallback(){
+    const r = document.createRange(); r.selectNodeContents(logEl);
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    document.getElementById("copied").textContent = "markiert – jetzt «Kopieren» antippen";
+  }
+}
+</script>
+</body>
+</html>
