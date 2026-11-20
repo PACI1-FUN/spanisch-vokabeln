@@ -153,6 +153,7 @@
   <section id="list" class="hidden">
     <table class="list" id="table"></table>
   </section>
+  <p style="text-align:center;color:var(--muted);font-size:.75rem;margin:28px 0 8px">App-Version 18</p>
 </main>
 
 <script>
@@ -1069,6 +1070,9 @@ function speak(text){
     const u = make(); currentUtterance = u;
     u.onstart = () => { started = true; };
     u.onerror = e => { if (e && (e.error === "interrupted" || e.error === "canceled")) return; if (!started) speechHint(); };
+    // Ton als Medienwiedergabe abspielen (wichtig für die Web-App auf dem Home-Bildschirm,
+    // sonst kann iOS die Aussprache dort stummschalten)
+    try { if (navigator.audioSession && navigator.audioSession.type !== "playback") navigator.audioSession.type = "playback"; } catch(e) {}
     try { synth.resume(); } catch(e) {}
     synth.speak(u);
     // Wenn nach 1.5 s nichts begonnen hat: Sprachausgabe zurücksetzen und einmal neu versuchen
